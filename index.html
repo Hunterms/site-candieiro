@@ -361,21 +361,21 @@ section{position:relative;z-index:1}
 .dado svg{color:var(--vm);flex-shrink:0}
 
 /* ── AGENDA ── */
-#agenda{padding:8rem 0;background:var(--pr);overflow:visible;position:relative;z-index:2}
-.cal-wrap{display:flex;align-items:flex-start;gap:1.2rem}
+#agenda{padding:8rem 0;background:var(--pr)}
+.cal-wrap{display:grid;grid-template-columns:320px 1fr;gap:2rem;align-items:start}
 /* calendário */
-.cal{flex-shrink:0;width:300px;background:var(--pr3);border:1px solid rgba(228,30,38,.13);border-radius:2px;overflow:hidden;user-select:none;
+.cal{background:var(--pr3);border:1px solid rgba(228,30,38,.13);border-radius:2px;overflow:hidden;user-select:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E")}
-.cal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;background:rgba(228,30,38,.07);border-bottom:1px solid rgba(228,30,38,.13)}
-.cal-mes{font-family:var(--fd);font-size:1.15rem;letter-spacing:.12em;color:var(--br)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;background:rgba(228,30,38,.07);border-bottom:1px solid rgba(228,30,38,.13)}
+.cal-mes{font-family:var(--fd);font-size:1.05rem;letter-spacing:.12em;color:var(--br)}
 .cal-nav{background:none;border:none;color:rgba(237,230,208,.42);cursor:pointer;font-size:1rem;padding:.2rem .45rem;transition:color .2s;border-radius:1px}
 .cal-nav:hover{color:var(--vm)}
 .cal-ds-row{display:grid;grid-template-columns:repeat(7,1fr);padding:.45rem .7rem .25rem}
 .cal-ds{text-align:center;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,230,208,.26);padding:.18rem 0}
-.cal-grade{display:grid;grid-template-columns:repeat(7,1fr);padding:.3rem .9rem 1rem;gap:3px}
+.cal-grade{display:grid;grid-template-columns:repeat(7,1fr);padding:.15rem .7rem .75rem;gap:2px}
 .cal-dia{
   aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  font-size:.82rem;color:rgba(237,230,208,.32);border-radius:2px;
+  font-size:.72rem;color:rgba(237,230,208,.32);border-radius:2px;
   font-family:var(--fb);font-weight:400;
   transition:all .18s;cursor:default;position:relative;
 }
@@ -388,35 +388,15 @@ section{position:relative;z-index:1}
 .cal-dia.tem-evento::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--vm)}
 .cal-dia.fora{opacity:.15}
 /* painel de detalhe do evento */
-/* popup hover do calendário */
-.cal-popup{
-  display:none;
-  flex-shrink:0;
-  width:220px;
-  background:var(--pr3);
-  border:1px solid rgba(228,30,38,.22);
-  box-shadow:0 4px 24px rgba(0,0,0,.5);
-  align-self:flex-start;
-  position:relative;
+.evt-detalhe{
+  background:var(--pr3);border:1px solid rgba(228,30,38,.15);
+  min-height:260px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85 .35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23f)' opacity='.08'/%3E%3C/svg%3E");
 }
-.cal-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--vm),transparent)}
-.cal-popup.vis{display:block;animation:popIn .15s ease}
-/* placeholder quando popup não está visível */
-.cal-hint{flex-shrink:0;width:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:rgba(237,230,208,.15);font-size:.68rem;line-height:1.7;border:1px dashed rgba(237,230,208,.07);padding:1.5rem 1rem;align-self:stretch;min-height:200px}
-.cal-hint svg{width:28px;height:28px;margin:0 auto .6rem;display:block;opacity:.2}
-@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.cp-num{font-family:var(--fd);font-size:2.4rem;line-height:1;color:var(--vm);padding:1.1rem 1.2rem .05rem}
-.cp-mes{font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,230,208,.28);padding:0 1.2rem .7rem}
-.cp-nome{font-family:var(--fd);font-size:1.05rem;letter-spacing:.04em;color:var(--br);padding:0 1.2rem .28rem;line-height:1.2}
-.cp-hora{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:rgba(237,230,208,.4);padding:0 1.2rem .75rem}
-.cp-tag{display:inline-flex;padding:.18rem .6rem;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;border-radius:2px;font-weight:500;margin:0 1.2rem 1.2rem}
-@media(max-width:640px){
-  .cal-wrap{flex-direction:column;gap:.8rem}
-  .cal{width:100%}
-  .cal-hint,.cal-popup{width:100%}
-}
-/* manter os tags de status */
+.evt-detalhe::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--vm),transparent)}
 .evt-vazio{text-align:center;color:rgba(237,230,208,.22);font-size:.82rem;line-height:1.7;padding:2rem}
+.evt-vazio svg{width:36px;height:36px;color:rgba(237,230,208,.12);margin:0 auto 1rem;display:block}
 .evt-info-box{padding:2rem;width:100%}
 .evt-data-big{font-family:var(--fd);font-size:3.5rem;line-height:1;color:var(--vm);margin-bottom:.2rem}
 .evt-mes-big{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(237,230,208,.3);margin-bottom:1.2rem}
@@ -820,14 +800,17 @@ footer{background:var(--pr);border-top:1px solid rgba(228,30,38,.12);padding:2.5
     <div class="rev" style="margin-bottom:2.5rem"><p class="rotulo">Próximos encontros</p><h2 class="titulo">Agenda</h2></div>
     <div class="cal-wrap rev">
       <div class="cal" id="cal"></div>
-      <div class="cal-hint" id="calHint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Passe o mouse<br>em um dia marcado
+      <div class="evt-detalhe" id="evtDetalhe">
+        <div class="evt-vazio" id="evtVazio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Clique em um dia com evento<br>para ver os detalhes
+        </div>
       </div>
-      <div class="cal-popup" id="calPopup"></div>
     </div>
     <div class="ger" id="ger">
       <div class="ger-top">
+        <div><h3>Gerenciar agenda</h3><p>Adicione ou remova eventos</p></div>
+        <button class="bfec" onclick="fecharGer()">Fechar</button>
       </div>
       <div class="ger-body">
         <div class="fg">
@@ -1218,8 +1201,13 @@ const SK='cand_v5';
 const MS_FULL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MS_MINI=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-// Eventos carregados pelo Firebase — sem dados mockados
-const DFLT=[];
+const DFLT=[
+  {id:1,nome:'Gira de Baianos',data:'2026-04-13',hora:'19:00',status:'aberto'},
+  {id:2,nome:'Baralho Cigano — Agenda Aberta',data:'2026-04-18',hora:'14:00',status:'aberto'},
+  {id:3,nome:'Feijoada de Ogum + Roda de Samba',data:'2026-04-26',hora:'10:00',status:'lotes'},
+  {id:4,nome:'Gira de Caboclos',data:'2026-05-05',hora:'19:00',status:'gratuito'},
+  {id:5,nome:'Alumeia Ori',data:'2026-05-12',hora:'19:30',status:'gratuito'},
+];
 const TAGS={aberto:['ta','Aberto'],gratuito:['tg','Gratuito'],lotes:['tl','Com ingressos'],esgotado:['te','Esgotado']};
 
 let cMes,cAno;
@@ -1249,7 +1237,7 @@ function renderCal(){
   for(let d=1;d<=diasN;d++){
     const ds=`${cAno}-${String(cMes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const c=['cal-dia',ds===hoje?'hoje':'',datas.has(ds)?'tem-evento':''].filter(Boolean).join(' ');
-    const click=datas.has(ds)?`onmouseenter="mostrarEvt('${ds}')" onmouseleave="esconderEvt()"` :'';
+    const click=datas.has(ds)?`onclick="mostrarEvt('${ds}')"` :'';
     h+=`<div class="${c}" ${click}>${d}</div>`;
   }
   h+='</div>';
@@ -1258,28 +1246,21 @@ function renderCal(){
 
 function mostrarEvt(data){
   const evts=ld().filter(e=>e.data===data);
-  if(!evts.length) return;
   const d=data.split('-');
-  const e=evts[0];
+  const box=document.getElementById('evtDetalhe');
+  if(!evts.length){box.innerHTML=`<div class="evt-vazio">Nenhum evento neste dia.</div>`;return}
+  const e=evts[0]; // por simplicidade, mostra o primeiro
   const [tc,tl]=TAGS[e.status]||TAGS.aberto;
-  const popup=document.getElementById('calPopup');
-  const delBtn=modoEd?`<button onclick="delEvt(${e.id})" style="display:block;margin:.5rem 1.5rem 1rem;background:none;border:1px solid rgba(228,30,38,.3);color:rgba(228,30,38,.6);padding:.3rem .7rem;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;font-family:var(--fb)">✕ Remover</button>`:'';
-  popup.innerHTML=`
-    <div class="cp-num">${d[2]}</div>
-    <div class="cp-mes">${MS_MINI[parseInt(d[1])-1]} · ${d[0]}</div>
-    <div class="cp-nome">${e.nome}</div>
-    <div class="cp-hora"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${e.hora} — Barão Geraldo</div>
-    <span class="cp-tag ${tc}">${tl}</span>
-    ${delBtn}`;
-  popup.classList.add('vis');
-  const hint = document.getElementById('calHint');
-  if(hint) hint.style.display='none';
-}
-function esconderEvt(){
-  const popup = document.getElementById('calPopup');
-  const hint  = document.getElementById('calHint');
-  popup.classList.remove('vis');
-  if(hint) hint.style.display='flex';
+  const delBtn=modoEd?`<button onclick="delEvt(${e.id})" style="margin-top:1rem;background:none;border:1px solid rgba(228,30,38,.3);color:rgba(228,30,38,.6);padding:.35rem .8rem;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;font-family:var(--fb)">✕ Remover evento</button>`:'';
+  box.innerHTML=`<div class="evt-info-box">
+    <div class="evt-data-big">${d[2]}</div>
+    <div class="evt-mes-big">${MS_MINI[parseInt(d[1])-1]} ${d[0]}</div>
+    <div class="evt-nome-big">${e.nome}</div>
+    <div class="evt-hora-big"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${e.hora} — Barão Geraldo</div>
+    <span class="evt-tag-big ${tc}">${tl}</span>
+    ${delBtn}
+    ${evts.length>1?`<p style="margin-top:.8rem;font-size:.7rem;color:rgba(237,230,208,.3)">+${evts.length-1} evento(s) neste dia</p>`:''}
+  </div>`;
 }
 
 function mudaMes(d){cMes+=d;if(cMes>11){cMes=0;cAno++}if(cMes<0){cMes=11;cAno--}renderCal()}
