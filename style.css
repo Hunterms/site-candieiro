@@ -435,4 +435,3 @@ footer{background:var(--pr);border-top:1px solid rgba(228,30,38,.12);padding:2.5
 @media(max-width:480px){
   .gal-grid{grid-template-columns:repeat(2,1fr);gap:2px}
 }
-
