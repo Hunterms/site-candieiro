@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════════════════════
+   pg.css — estilos específicos de subpáginas
+   (baralho-cigano, visitar, etc.)
+   Usa as variáveis e classes base definidas em style.css
+═══════════════════════════════════════════════════════════ */
+
+/* ── PAGE HERO (topo de subpágina) ── */
+.pg-hero{padding:10rem 2rem 5rem;text-align:center;position:relative;background:linear-gradient(180deg,#1a0808 0%,var(--pr) 100%)}
+.pg-rotulo{font-size:.62rem;letter-spacing:.52em;text-transform:uppercase;color:var(--vm);margin-bottom:1rem;font-weight:400}
+.pg-titulo{font-family:var(--fd);font-size:clamp(2.6rem,6vw,5rem);line-height:.92;color:var(--br);margin-bottom:1.35rem;letter-spacing:.02em}
+.pg-titulo em{font-family:var(--fs);font-style:italic;color:var(--ou2);font-size:.83em}
+.pg-lead{font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.65;color:rgba(237,230,208,.75);max-width:620px;margin:0 auto 2rem}
+
+/* CTA verde WhatsApp */
+.pg-cta{display:inline-flex;align-items:center;gap:.65rem;background:#25D366;color:#fff;padding:1rem 2rem;text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.08em;border-radius:2px;transition:all .2s;font-family:var(--fb)}
+.pg-cta:hover{background:#1fa651;transform:translateY(-2px)}
+.pg-cta svg{width:17px;height:17px;flex-shrink:0}
+
+/* ── SEÇÕES DE SUBPÁGINA ── */
+main > section{position:relative;z-index:1;padding:4.5rem 0}
+main > section .titulo{font-size:clamp(1.9rem,4vw,3.2rem)}
+
+/* Texto corrido */
+.texto{font-size:1rem;line-height:1.75;color:rgba(237,230,208,.78);margin-bottom:1.2rem;max-width:720px}
+.texto strong{color:var(--br);font-weight:500}
+
+/* ── MODALIDADE CARDS (baralho-cigano: presencial × online) ── */
+.mods{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;margin:2rem 0 1rem}
+.mod-card{background:var(--pr2);border:1px solid rgba(237,230,208,.08);padding:2rem;border-radius:4px;transition:all .3s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8 .3' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='.045'/%3E%3C/svg%3E")}
+.mod-card:hover{border-color:rgba(228,30,38,.3);transform:translateY(-3px)}
+.mod-card h3{font-family:var(--fd);font-size:1.35rem;letter-spacing:.06em;color:var(--br);margin-bottom:.6rem}
+.mod-card > p{color:rgba(237,230,208,.62);font-size:.85rem;line-height:1.7;margin-bottom:1rem}
+.mod-card .tag{display:inline-block;background:rgba(228,30,38,.12);color:var(--vm);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;padding:.3rem .7rem;border-radius:2px;margin-bottom:1rem;font-weight:500}
+.mod-card ul{list-style:none;padding:0;margin:1rem 0}
+.mod-card li{font-size:.83rem;color:rgba(237,230,208,.58);padding:.32rem 0;padding-left:1.2rem;position:relative;line-height:1.55}
+.mod-card li::before{content:'·';position:absolute;left:.3rem;color:var(--vm);font-weight:700;font-size:1.4rem;line-height:.95}
+
+/* ── PASSOS NUMERADOS (baralho-cigano) ── */
+.passos{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2rem}
+.passo{background:var(--pr3);border-left:2px solid var(--vm);padding:1.4rem 1.6rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
+.passo-n{font-family:var(--fd);font-size:.72rem;letter-spacing:.3em;color:var(--vm);margin-bottom:.6rem;font-weight:400}
+.passo h4{font-family:var(--fd);font-size:1.05rem;letter-spacing:.07em;color:var(--br);margin-bottom:.5rem}
+.passo p{font-size:.8rem;color:rgba(237,230,208,.55);line-height:1.65}
+
+/* ── FAQ ── */
+.faq-item{border-bottom:1px solid rgba(237,230,208,.06);padding:1.5rem 0}
+.faq-item:last-child{border-bottom:none}
+.faq-item h3{font-family:var(--fs);font-size:1.15rem;color:var(--br);margin-bottom:.7rem;font-weight:700;font-style:italic}
+.faq-item p{font-size:.92rem;line-height:1.75;color:rgba(237,230,208,.65)}
+
+/* ── CTA FINAL ── */
+.cta-final,.cta-pg{background:linear-gradient(135deg,rgba(228,30,38,.08) 0%,rgba(13,13,13,1) 100%);border:1px solid rgba(228,30,38,.18);padding:3rem 2rem;text-align:center;margin:3rem 0 0;border-radius:4px;position:relative;overflow:hidden}
+.cta-final::before,.cta-pg::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--vm),var(--ou2),transparent)}
+.cta-final h3,.cta-pg h3{font-family:var(--fd);font-size:clamp(1.5rem,2.8vw,2rem);letter-spacing:.06em;color:var(--br);margin-bottom:.8rem}
+.cta-final p,.cta-pg p{color:rgba(237,230,208,.65);margin-bottom:1.4rem;max-width:480px;margin-left:auto;margin-right:auto;font-size:.92rem;line-height:1.65}
+
+/* ── ITENS NUMERADOS (visitar) ── */
+.item{display:grid;grid-template-columns:auto 1fr;gap:1.3rem;align-items:start;padding:1.6rem 0;border-bottom:1px solid rgba(237,230,208,.055)}
+.item:last-child{border-bottom:none}
+.item .num{font-family:var(--fd);font-size:1.4rem;color:var(--vm);letter-spacing:.04em;min-width:32px;line-height:1}
+.item h3{font-family:var(--fs);font-size:1.12rem;color:var(--br);margin-bottom:.45rem;font-weight:700;font-style:italic}
+.item p{font-size:.92rem;line-height:1.7;color:rgba(237,230,208,.65)}
+
+/* ── AVISO (visitar) ── */
+.aviso{background:rgba(228,30,38,.07);border-left:3px solid var(--vm);padding:1.3rem 1.6rem;margin:1.8rem 0;border-radius:2px}
+.aviso p{color:rgba(237,230,208,.78);font-size:.9rem;line-height:1.65;margin:0}
+.aviso strong{color:var(--vm);font-weight:500}
+
+/* ── RESPONSIVO SUBPÁGINAS ── */
+@media(max-width:900px){
+  .mods,.passos{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .pg-hero{padding:7rem 1.2rem 3.5rem}
+  main > section{padding:3rem 0}
+  .item{grid-template-columns:1fr;gap:.5rem}
+  .cta-final,.cta-pg{padding:2.2rem 1.5rem}
+  .mod-card{padding:1.5rem}
+}
