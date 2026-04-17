@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Primeira vez em terreiro — Como visitar o Candieiro</title>
 
-<meta name="description" content="Orientações pra quem vai pela primeira vez em uma gira de Umbanda. Roupa, horário, comportamento e o que esperar no Terreiro do Candieiro, em Barão Geraldo, Campinas.">
+<meta name="description" content="Primeira vez em uma gira de Umbanda: roupa, horário e o que esperar no Terreiro do Candieiro, em Barão Geraldo, Campinas.">
 <meta name="keywords" content="primeira vez em terreiro, como visitar terreiro de umbanda, o que vestir em gira de umbanda, como se comportar em terreiro, posso tirar foto em terreiro, terreiro aberto ao público campinas, visitar terreiro barão geraldo">
 <meta name="author" content="Terreiro do Candieiro">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -63,8 +63,12 @@
 <body>
 
 <nav id="nav">
-  <a href="/" class="nl"><span class="nn">TERREIRO DO CANDIEIRO<small>Umbanda · Jurema Sagrada</small></span></a>
+  <a href="/" class="nl">
+    <img id="nav-logo" src="/logo.png" alt="Terreiro do Candieiro">
+    <div class="nn">TERREIRO DO CANDIEIRO<small>Umbanda · Jurema Sagrada</small></div>
+  </a>
   <ul class="nlinks">
+    <li><a href="/">Início</a></li>
     <li><a href="/baralho-cigano.html">Baralho Cigano</a></li>
     <li><a href="/visitar.html" class="on">Visitar</a></li>
     <li><a href="/#agenda">Agenda</a></li>
@@ -75,6 +79,7 @@
   <button class="hbg" id="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></button>
 </nav>
 <div class="mmob" id="mmob">
+  <a href="/">Início</a>
   <a href="/baralho-cigano.html">Baralho Cigano</a>
   <a href="/visitar.html">Visitar</a>
   <a href="/#agenda">Agenda</a>
@@ -204,6 +209,31 @@
 
 <script>
 function toggleMenu(){document.getElementById('hbg').classList.toggle('ativo');document.getElementById('mmob').classList.toggle('aberto')}
+</script>
+
+
+<script type="module">
+  // Busca logo dinâmico do Firestore (config.logoUrl) — espelha comportamento da home
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAViFU3bdl8RKSHBuxMGAc97SPITd1aJWM",
+    authDomain:        "terreiro-candieiro.firebaseapp.com",
+    projectId:         "terreiro-candieiro",
+    storageBucket:     "terreiro-candieiro.firebasestorage.app",
+    messagingSenderId: "100068133826",
+    appId:             "1:100068133826:web:aa6bea82298a266737a45b"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  getDocs(collection(db, "config")).then(snap => {
+    if (snap.empty) return;
+    const data = snap.docs[0].data();
+    if (data.logoUrl) {
+      const img = document.getElementById("nav-logo");
+      if (img) { img.src = data.logoUrl; img.style.filter = "brightness(0) invert(1)"; }
+    }
+  }).catch(err => console.warn("Logo fetch failed:", err));
 </script>
 
 </body>
