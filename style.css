@@ -1,3 +1,12 @@
+
+/* ── SMOOTH PAGE TRANSITIONS ── */
+/* View Transitions API (Chrome 111+, ~90% dos browsers modernos) */
+@view-transition { navigation: auto }
+
+/* Fade-in fallback pra suavizar o flash entre páginas */
+@keyframes pageFade { from { opacity: 0 } to { opacity: 1 } }
+body { animation: pageFade .28s ease-out }
+
 :root{
   --vm:#e41e26;--vm2:#9e1419;--pr:#0d0d0d;--pr2:#131313;--pr3:#1a1a1a;--pr4:#222;
   --br:#ede6d0;--br2:#c9c0a8;--ou:#b8820a;--ou2:#e0a820;
