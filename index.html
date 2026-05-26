@@ -216,10 +216,23 @@
   const st  = getStorage(app);
 
   // ── Calendário — escuta em tempo real ──
+  // FILTRO: SÓ GIRAS ABERTAS aparecem no site público
+  //   - publico === false → bloqueado
+  //   - tipo interno (gira_fechada, trabalho_interno, mutirao, etc) → bloqueado
+  //   - arquivado === true → bloqueado
+  // Eventos antigos sem campo "tipo" e sem "publico" são tratados como gira aberta (compat).
+  const TIPOS_INTERNOS = new Set(['gira_fechada','trabalho_interno','mutirao','reuniao','obrigacao_coletiva','ensaio_curimba']);
   const qEvt = query(collection(db, "eventos"), orderBy("data", "asc"));
   onSnapshot(qEvt, snap => {
-    // Sempre atualiza, mesmo array vazio (limpa dados antigos do localStorage)
-    const evts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const evts = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(e => {
+        if (e.arquivado === true) return false;
+        if (e.publico === false) return false;
+        if (e.tipo && TIPOS_INTERNOS.has(e.tipo)) return false;
+        if (e.tipo === 'festa') return false; // festas tb ficam fora por enquanto
+        return true;
+      });
     localStorage.setItem('cand_v5', JSON.stringify(evts));
     if (window.renderCal) window.renderCal();
   });
