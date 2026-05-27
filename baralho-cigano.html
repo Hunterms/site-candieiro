@@ -335,24 +335,7 @@ function toggleMenu(){document.getElementById('hbg').classList.toggle('ativo');d
 </script>
 
 
-<script type="module">
-  // Busca logo dinâmico do Firestore (config.logoUrl) — espelha comportamento da home
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const firebaseConfig = {
-    apiKey:            "AIzaSyAViFU3bdl8RKSHBuxMGAc97SPITd1aJWM",
-    authDomain:        "terreiro-candieiro.firebaseapp.com",
-    projectId:         "terreiro-candieiro",
-    storageBucket:     "terreiro-candieiro.firebasestorage.app",
-    messagingSenderId: "100068133826",
-    appId:             "1:100068133826:web:aa6bea82298a266737a45b"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-  getDocs(collection(db, "config")).then(snap => {
-    if (snap.empty) return;
-    const data = snap.docs[0].data();
-    if (data.logoUrl) {
-      const img = document.getElementById("nav-logo");
-      if (img) { img.src = data.logoUrl; img.style.filter = "brightness(0) invert(1)"; }
-    }
+<!-- Logo dinâmica via Firestore removida: agora estática em /logocandieiro.png -->
+
+</body>
+</html>

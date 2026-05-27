@@ -285,16 +285,8 @@
     }
   });
 
-  // ── Config (logo) ── dispara evento após DOM pronto
-  getDocs(collection(db, "config")).then(snap => {
-    if (snap.empty) return;
-    const data = snap.docs[0].data();
-    if (data.logoUrl) {
-      // Guardar globalmente e disparar evento para o script no body aplicar
-      window._logoUrl = data.logoUrl;
-      document.dispatchEvent(new CustomEvent("fb-logo", { detail: data.logoUrl }));
-    }
-  });
+  // ── Config (logo) ── removido: logo agora vem do HTML estático
+  // (/logocandieiro.png). Pra trocar, atualize o arquivo no repo.
 
   // Expor renderCar/renderCal globalmente para o módulo poder chamá-los
   window._fbReady = true;
@@ -943,12 +935,7 @@ function initStrapi() {
   var base = window.STRAPI_URL.replace(/\/$/, '');
   initStrapiExtra(base);
 
-  fetch(base + '/config?populate=logo')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var url = d && d.data && d.data.attributes && d.data.attributes.logoUrl;
-      if (url) { var img = document.getElementById('nav-logo'); if (img) img.src = url; }
-    }).catch(function(){});
+  // logo agora é estática (/logocandieiro.png) — não buscamos mais do Strapi
 
   fetch(base + '/slides?populate=imagem&sort=ordem:asc')
     .then(function(r){ return r.json(); })
@@ -1055,17 +1042,7 @@ function initStrapiExtra(base){
     }).catch(function(){});
 }
 
-/* ── LOGO FIREBASE ── */
-document.addEventListener('fb-logo', function(e){
-  var url = e.detail;
-  var img = document.getElementById('nav-logo');
-  if (img){ img.src = url; img.style.filter = 'brightness(0) invert(1)'; }
-});
-/* Se o logo já chegou antes deste script carregar */
-if (window._logoUrl){
-  var img = document.getElementById('nav-logo');
-  if (img){ img.src = window._logoUrl; img.style.filter = 'brightness(0) invert(1)'; }
-}
+/* Logo agora é estática (/logocandieiro.png), sem override + sem filtro de cor */
 
 window.addEventListener('load', function(){
   renderCar();
