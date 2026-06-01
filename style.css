@@ -17,28 +17,17 @@ body { animation: pageFade .28s ease-out }
 html{scroll-behavior:smooth}
 body{background:var(--pr);color:var(--br);font-family:var(--fb);font-weight:300;overflow-x:hidden}
 
-/* ── PAPEL: 2 camadas ──
-   Promovidas a GPU layer via will-change+translateZ pra que scroll
-   só componha as layers (sem repintar feTurbulence+mix-blend a cada
-   frame). Resolve jank de scroll causado por SVG noise fullscreen. */
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:8000;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size:200px 200px;opacity:.7;mix-blend-mode:multiply;
-  will-change:transform;transform:translateZ(0);
-}
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:8001;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42 0.08' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23f)' opacity='1'/%3E%3C/svg%3E");
-  background-size:512px 512px;opacity:.25;mix-blend-mode:overlay;
-  will-change:transform;transform:translateZ(0);
-}
+/* ── PAPEL: REMOVIDO por performance ──
+   Os 2 overlays fullscreen (body::before/::after) com feTurbulence
+   SVG + mix-blend-mode (multiply/overlay) eram os maiores culpados
+   pelo jank de scroll — mix-blend-mode força recomposição pixel-a-pixel
+   com tudo embaixo a cada frame. GPU layer não resolve totalmente
+   esse caso. Trocados pelos cards/sections que já têm noise discreto. */
 
 /* ── NAV ──
-   backdrop-filter:blur reduzido de 14px pra 8px (40% menos cálculo
-   por frame, diferença visual quase imperceptível). will-change pra
-   manter em layer dedicada. */
-#nav{position:fixed;top:0;left:0;right:0;z-index:700;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(13,13,13,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(228,30,38,.18);transition:background .3s;will-change:transform;transform:translateZ(0)}
+   backdrop-filter:blur removido — repinta tudo atrás a cada scroll
+   frame. Fundo sólido rgba é virtualmente idêntico visualmente. */
+#nav{position:fixed;top:0;left:0;right:0;z-index:700;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(13,13,13,.97);border-bottom:1px solid rgba(228,30,38,.18);transition:background .3s;will-change:transform;transform:translateZ(0)}
 .nl{display:flex;align-items:center;gap:.7rem;text-decoration:none}
 .nl img{width:52px;height:52px;object-fit:contain;flex-shrink:0}
 .nn{font-family:var(--fd);font-size:1.05rem;letter-spacing:.2em;color:var(--br);line-height:1.2}
@@ -71,10 +60,11 @@ body::after{
 /* fundo do slide: imagem ou cor */
 .car-bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .car-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.85) 0%,rgba(13,13,13,.45) 50%,rgba(13,13,13,.2) 100%)}
-/* textura sobre o carrossel */
-.car-tex{position:absolute;inset:0;z-index:1;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='turbulence' baseFrequency='.2' numOctaves='5' seed='9' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='6'/%3E%3C/filter%3E%3Crect width='400' height='400' fill='%230d0d0d' filter='url(%23w)'/%3E%3C/svg%3E");
-  opacity:.35;mix-blend-mode:multiply}
+/* textura sobre o carrossel — desativada por performance
+   (feTurbulence + feDisplacementMap + mix-blend-mode era o filtro
+   mais caro do site). O slide já tem gradient sobre a imagem que
+   dá contraste suficiente pro texto. */
+.car-tex{display:none}
 .car-conteudo{position:relative;z-index:2;text-align:center;padding:2rem 1.5rem;max-width:700px;width:100%}
 .car-label{font-size:.62rem;letter-spacing:.52em;text-transform:uppercase;color:rgba(228,30,38,.75);margin-bottom:1.4rem;opacity:0;transform:translateY(12px);transition:all .7s .1s}
 .car-slide.ativo .car-label{opacity:1;transform:translateY(0)}
