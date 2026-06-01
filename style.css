@@ -17,20 +17,28 @@ body { animation: pageFade .28s ease-out }
 html{scroll-behavior:smooth}
 body{background:var(--pr);color:var(--br);font-family:var(--fb);font-weight:300;overflow-x:hidden}
 
-/* ── PAPEL: 2 camadas ── */
+/* ── PAPEL: 2 camadas ──
+   Promovidas a GPU layer via will-change+translateZ pra que scroll
+   só componha as layers (sem repintar feTurbulence+mix-blend a cada
+   frame). Resolve jank de scroll causado por SVG noise fullscreen. */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:8000;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   background-size:200px 200px;opacity:.7;mix-blend-mode:multiply;
+  will-change:transform;transform:translateZ(0);
 }
 body::after{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:8001;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42 0.08' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23f)' opacity='1'/%3E%3C/svg%3E");
   background-size:512px 512px;opacity:.25;mix-blend-mode:overlay;
+  will-change:transform;transform:translateZ(0);
 }
 
-/* ── NAV ── */
-#nav{position:fixed;top:0;left:0;right:0;z-index:700;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(13,13,13,.93);backdrop-filter:blur(14px);border-bottom:1px solid rgba(228,30,38,.18);transition:background .3s}
+/* ── NAV ──
+   backdrop-filter:blur reduzido de 14px pra 8px (40% menos cálculo
+   por frame, diferença visual quase imperceptível). will-change pra
+   manter em layer dedicada. */
+#nav{position:fixed;top:0;left:0;right:0;z-index:700;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(13,13,13,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(228,30,38,.18);transition:background .3s;will-change:transform;transform:translateZ(0)}
 .nl{display:flex;align-items:center;gap:.7rem;text-decoration:none}
 .nl img{width:52px;height:52px;object-fit:contain;flex-shrink:0}
 .nn{font-family:var(--fd);font-size:1.05rem;letter-spacing:.2em;color:var(--br);line-height:1.2}
@@ -146,8 +154,13 @@ body::after{
   user-select:none;
 }
 
-/* ── SEÇÕES ── */
-section{position:relative;z-index:1}
+/* ── SEÇÕES ──
+   content-visibility:auto pula render de seções fora do viewport
+   (Chrome 85+). contain-intrinsic-size dá uma altura estimada pra
+   manter scroll position correto. Ganho enorme em scroll. */
+section{position:relative;z-index:1;content-visibility:auto;contain-intrinsic-size:auto 700px}
+/* Hero não pode ter content-visibility — viewport inicial */
+section#hero{content-visibility:visible}
 .miolo{max-width:1060px;margin:0 auto;padding:0 2rem}
 .rotulo{font-size:.62rem;letter-spacing:.52em;text-transform:uppercase;color:var(--vm);margin-bottom:.72rem;font-weight:400}
 .titulo{font-family:var(--fd);font-size:clamp(2.4rem,5.5vw,4.8rem);line-height:.92;color:var(--br);margin-bottom:1.35rem;letter-spacing:.02em}
