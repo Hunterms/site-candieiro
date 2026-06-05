@@ -222,7 +222,7 @@
   //   - tipo interno (gira_fechada, trabalho_interno, mutirao, etc) → bloqueado
   //   - arquivado === true → bloqueado
   // Eventos antigos sem campo "tipo" e sem "publico" são tratados como gira aberta (compat).
-  const TIPOS_INTERNOS = new Set(['gira_fechada','trabalho_interno','mutirao','reuniao','obrigacao_coletiva','ensaio_curimba']);
+  const TIPOS_INTERNOS = new Set(['gira_fechada','trabalho_interno','mutirao','reuniao','obrigacao_coletiva','ensaio_curimba','evento_filho']);
   const qEvt = query(collection(db, "eventos"), orderBy("data", "asc"));
   onSnapshot(qEvt, snap => {
     const evts = snap.docs
