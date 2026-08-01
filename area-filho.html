@@ -226,6 +226,76 @@ a.dash-link:active{transform:scale(.99)}
 
 .help{font-size:13px;color:var(--text3);line-height:1.5;padding:12px 14px;background:var(--glass2);border-radius:8px;margin-bottom:14px}
 
+/* ── BARRA DE ABAS ────────────────────────────────────────────────────────
+   Todo app de celular tem abas embaixo, e a área do filho é um app instalado.
+   Dez acordeões irmãos eram uma lista plana: cada coisa nova virava a décima
+   primeira e a página só crescia pra baixo. Com abas, coisa nova entra numa
+   aba que já existe.
+
+   Fixa no rodapé, com respiro pro notch do iPhone (`safe-area-inset-bottom`).
+   Sem isso, no iPhone X pra frente o último botão fica embaixo da barra de
+   gestos e vira intocável. */
+.abas{position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;background:rgba(13,13,13,.97);backdrop-filter:blur(14px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0)}
+.aba-btn{flex:1;padding:9px 2px 7px;background:none;border:none;font-family:var(--font);color:var(--text3);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;-webkit-tap-highlight-color:transparent}
+.aba-btn .ic{font-size:17px;line-height:1}
+.aba-btn .rot{font-size:10px;font-weight:650;letter-spacing:.01em}
+.aba-btn[aria-selected="true"]{color:var(--gold)}
+.aba-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-3px;border-radius:8px}
+.aba-pt{position:absolute;top:6px;right:calc(50% - 16px);min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--bg)}
+/* A aba esconde com !important pra conviver com o `style.display` que catorze
+   render functions já escrevem por conta própria. Basta uma das duas dizer não
+   pra seção sumir — que é o comportamento certo: a aba diz "não é aqui", o
+   papel diz "não é pra você". */
+.fora-da-aba{display:none !important}
+/* Com abas, as duas colunas viram estorvo: as seções de uma aba se dividiriam
+   entre elas, e a outra ficaria vazia na maioria das abas. Vira coluna única,
+   com largura de leitura. E os títulos "Área da comunidade" / "Meu painel"
+   somem — quem nomeia a seção agora é a aba acesa. */
+body.com-abas .painel-grid{grid-template-columns:1fr;gap:0;max-width:620px;margin:0 auto}
+body.com-abas .col-titulo{display:none}
+/* O corpo precisa caber acima da barra, senão o último card fica escondido. */
+body.com-abas{padding-bottom:calc(78px + env(safe-area-inset-bottom,0))}
+/* Com abas, as seções param de ser sanfona: a aba já é o recolher. */
+body.com-abas .dash-secao > summary{cursor:default}
+body.com-abas .dash-chevron{display:none}
+
+/* ── CAIXA DE AVISOS ─────────────────────────────────────────────────────
+   O não lido é marcado por fundo e por um ponto, não só por peso da fonte:
+   negrito sozinho some pra quem enxerga pouco, e some de vez em tela pequena
+   sob sol. */
+.av-item{display:flex;gap:11px;padding:12px 13px;border-radius:11px;background:var(--glass2);border:1px solid var(--border);align-items:flex-start;margin-bottom:8px}
+.av-item.novo{background:rgba(212,168,67,.07);border-color:rgba(212,168,67,.26)}
+.av-ponto{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:6px}
+.av-item:not(.novo) .av-ponto{background:transparent}
+.av-corpo{flex:1;min-width:0}
+.av-tit{font-size:13.5px;font-weight:650;line-height:1.35;color:var(--text)}
+.av-txt{font-size:12.5px;color:var(--text2);margin-top:3px;line-height:1.5}
+.av-quando{font-size:11px;color:var(--text3);margin-top:5px}
+.av-divisor{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);font-weight:700;margin:14px 0 8px}
+
+/* ── TELA DE PIN ──────────────────────────────────────────────────────────
+   Substitui o prompt() do navegador. O prompt não mascara o que se digita,
+   alguns navegadores bloqueiam, e ele não sabe dizer "erraram 4 vezes, faltam
+   3". Isto é a porta de entrada de 56 pessoas: merece ser uma tela. */
+.pin-tela{position:fixed;inset:0;z-index:3000;background:rgba(8,8,8,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:22px;animation:pinIn .16s ease-out}
+@keyframes pinIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.pin-tela{animation:none}}
+.pin-caixa{width:100%;max-width:330px;text-align:center}
+.pin-av{width:56px;height:56px;border-radius:50%;background:var(--gold-bg);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;margin:0 auto 16px}
+.pin-tit{font-size:18px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
+.pin-sub{font-size:13px;color:var(--text2);margin-top:9px;line-height:1.55}
+/* Um campo só, e não quatro caixas: quatro caixas exigem malabarismo de foco,
+   quebram colar e quebram o apagar. O que importa é ser grande, numérico e
+   óbvio — e isso um campo entrega. */
+.pin-campo{width:100%;margin-top:20px;padding:16px 12px;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:30px;font-weight:800;letter-spacing:.42em;text-indent:.42em;background:rgba(255,255,255,.05);border:1.5px solid var(--border2);border-radius:12px;color:var(--text);outline:none}
+.pin-campo:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.16)}
+.pin-campo.erro{border-color:var(--red);animation:tremer .3s}
+@keyframes tremer{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.pin-campo.erro{animation:none}}
+.pin-erro{font-size:12.5px;color:var(--red);margin-top:10px;line-height:1.45;min-height:18px}
+.pin-dica{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.55}
+.pin-dica b{color:var(--text2);font-weight:600}
+
 .toast{position:fixed;top:24px;right:24px;background:#181412;border:1px solid var(--border2);border-left:3px solid var(--green);border-radius:var(--rad);padding:14px 18px;font-size:14px;z-index:2000;animation:slideIn .2s;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .toast.err{border-left-color:var(--red)}
 @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -269,6 +339,15 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
   </div>
 
   <div id="content" style="display:none">
+    <!-- O que falta pra sua área funcionar vem ANTES de tudo, e INSTALAR vem
+         antes de cadastrar. Com o email fora do jogo, o push é o único canal
+         imediato que existe: quem não instalou não é avisado de nada. Data de
+         nascimento pode esperar; ser alcançável, não. -->
+    <div id="topo-pendencias" style="max-width:620px;margin:0 auto">
+      <div id="push-card" style="display:none;margin-bottom:14px"></div>
+      <div id="cadastro-card" style="display:none"></div>
+    </div>
+
     <div class="painel-grid">
 
       <!-- COLUNA ESQUERDA (desktop): Área da comunidade — vira segunda em mobile -->
@@ -279,20 +358,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
         </div>
 
         <!-- Card pedindo data de nascimento — só pra quem não tem -->
-        <div id="nasc-capture-card" style="display:none;padding:14px 16px;background:linear-gradient(135deg,rgba(231,51,41,.12),rgba(231,51,41,.02));border:1px solid rgba(231,51,41,.35);border-radius:12px;margin-bottom:14px">
-          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-            <span style="font-size:22px;line-height:1">🎂</span>
-            <div style="flex:1;min-width:0">
-              <div class="t-titulo">Quando você nasceu?</div>
-              <div class="t-corpo">A casa gosta de comemorar aniversário da galera. Cadastra sua data pra entrar na lista de aniversariantes do mês.</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input class="fi" id="nc-data" type="date" max="2025-12-31" style="flex:1;min-width:160px;padding:10px 12px;font-size:14px"/>
-            <button class="btn btn-primary" id="nc-save" style="white-space:nowrap;padding:10px 16px;font-size:13.5px">Salvar</button>
-          </div>
-          <div id="nc-err" class="erro-campo"></div>
-        </div>
+        <!-- Cadastro que se completa. Um card, uma pergunta por vez. -->
 
         <!-- Aniversariantes do mês -->
         <div id="aniversariantes-card" style="display:none;padding:14px 16px;background:linear-gradient(135deg,rgba(212,168,67,.10),rgba(212,168,67,.02));border:1px solid rgba(212,168,67,.3);border-radius:12px;margin-bottom:14px">
@@ -304,7 +370,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
         <div id="eventos-filho-container"></div>
         <div id="giras-container"></div>
 
-        <details class="dash-secao" id="dash-sec-rega">
+        <details class="dash-secao" id="dash-sec-rega" data-aba="agenda" style="display:none">
           <summary>
             <div class="dash-head-text">
               <h2>💧 Escala de rega <span class="dash-badge muted" id="dash-cnt-rega"></span></h2>
@@ -345,29 +411,13 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
               <div class="identity-name" id="id-name"></div>
               <div class="identity-roles" id="id-roles"></div>
             </div>
+            <button class="identity-trocar" id="id-sino" onclick="irParaAvisos()" title="Seus avisos" style="margin-right:6px">🔔</button>
             <button class="identity-trocar" onclick="trocarFilho()" title="Sair desta conta">trocar</button>
           </div>
 
           <!-- Notificação: só aparece pra quem já entrou, e só se este aparelho
                puder receber. Some sozinho no resto — botão que nunca vai
                funcionar aqui é ruído. -->
-          <div id="push-card" style="display:none;margin-bottom:14px"></div>
-
-          <!-- Card pedindo email — só pra quem não tem auth_email -->
-          <div id="email-capture-card" style="display:none;padding:14px 16px;background:linear-gradient(135deg,rgba(52,152,219,.12),rgba(52,152,219,.02));border:1px solid rgba(52,152,219,.35);border-radius:12px;margin-bottom:14px">
-            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-              <span style="font-size:22px;line-height:1">📧</span>
-              <div style="flex:1;min-width:0">
-                <div class="t-titulo">Cadastra seu email pra receber lembretes</div>
-                <div class="t-corpo">Manda a véspera pra você não esquecer da rega, escala da gira ou tarefa que tá com você. Você pode parar quando quiser.</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input class="fi" id="ec-email" type="email" placeholder="seu@email.com" autocomplete="email" style="flex:1;min-width:160px;padding:10px 12px;font-size:14px"/>
-              <button class="btn btn-primary" id="ec-save" style="white-space:nowrap;padding:10px 16px;font-size:13.5px">Salvar</button>
-            </div>
-            <div id="ec-err" class="erro-campo"></div>
-          </div>
 
           <!-- Action items: o que precisa da atenção agora -->
           <div id="actions-wrap" style="display:none">
@@ -379,7 +429,20 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           <!-- Ordem: Tarefas → Escalas → Reembolso → Disponibilidade → Afilhados -->
 
           <!-- Mensalidade do mês (escondida até o Worker responder) -->
-          <details class="dash-secao" id="dash-sec-mensalidade" style="display:none">
+          <details class="dash-secao" id="dash-sec-avisos" data-aba="avisos" style="display:none" open>
+            <summary>
+              <div class="dash-head-text">
+                <h2>🔔 Seus avisos <span class="dash-badge" id="dash-cnt-avisos"></span></h2>
+                <p class="dash-sub">Tudo que a casa te contou, mesmo o que não chegou no celular.</p>
+              </div>
+              <span class="dash-chevron">▾</span>
+            </summary>
+            <div class="dash-body">
+              <div id="avisos-inbox"></div>
+            </div>
+          </details>
+
+          <details class="dash-secao" id="dash-sec-mensalidade" data-aba="mensalidade" style="display:none">
             <summary>
               <div class="dash-head-text">
                 <h2>💰 Minha mensalidade <span class="dash-badge" id="dash-cnt-mensalidade"></span></h2>
@@ -393,7 +456,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Tarefas (kanban) -->
-          <details class="dash-secao" id="dash-sec-tarefas">
+          <details class="dash-secao" id="dash-sec-tarefas" data-aba="inicio">
             <summary>
               <div class="dash-head-text">
                 <h2>✅ Minhas tarefas <span class="dash-badge" id="dash-cnt-tarefas"></span></h2>
@@ -407,7 +470,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Perguntas da casa (quiz/alinhamento de conhecimento) -->
-          <details class="dash-secao" id="dash-sec-perguntas" style="display:none">
+          <details class="dash-secao" id="dash-sec-perguntas" data-aba="inicio" style="display:none">
             <summary>
               <div class="dash-head-text">
                 <h2>❓ Perguntas pra você <span class="dash-badge" id="dash-cnt-perguntas"></span></h2>
@@ -421,7 +484,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Lista de afazeres da casa (tarefas abertas pra qualquer um pegar) -->
-          <details class="dash-secao" id="dash-sec-afazeres" style="display:none">
+          <details class="dash-secao" id="dash-sec-afazeres" data-aba="casa" style="display:none">
             <summary>
               <div class="dash-head-text">
                 <h2>📝 Lista de afazeres da casa <span class="dash-badge" id="dash-cnt-afazeres"></span></h2>
@@ -435,7 +498,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Próximas escalas -->
-          <details class="dash-secao" id="dash-sec-escalas">
+          <details class="dash-secao" id="dash-sec-escalas" data-aba="agenda">
             <summary>
               <div class="dash-head-text">
                 <h2>📅 Minhas próximas escalas <span class="dash-badge" id="dash-cnt-escalas"></span></h2>
@@ -449,7 +512,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Reembolso -->
-          <details class="dash-secao" id="dash-sec-reemb">
+          <details class="dash-secao" id="dash-sec-reemb" data-aba="mensalidade">
             <summary>
               <div class="dash-head-text">
                 <h2>💸 Pedir reembolso <span class="dash-badge" id="dash-cnt-reemb"></span></h2>
@@ -464,7 +527,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Disponibilidade do mês -->
-          <details class="dash-secao" id="dash-sec-disp">
+          <details class="dash-secao" id="dash-sec-disp" data-aba="agenda">
             <summary>
               <div class="dash-head-text">
                 <h2>📋 Minha disponibilidade <span class="dash-badge muted" id="dash-cnt-disp"></span></h2>
@@ -478,7 +541,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Afilhados (só aparece se for padrinho/madrinha) -->
-          <details class="dash-secao" id="dash-sec-afilhados" style="display:none">
+          <details class="dash-secao" id="dash-sec-afilhados" data-aba="casa" style="display:none">
             <summary>
               <div class="dash-head-text">
                 <h2>👥 Meus afilhados <span class="dash-badge" id="dash-cnt-afilhados"></span></h2>
@@ -492,7 +555,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Lojinha — só aparece pra quem gerencia (Giovana, Aline, etc.) -->
-          <details class="dash-secao" id="dash-sec-lojinha" style="display:none">
+          <details class="dash-secao" id="dash-sec-lojinha" data-aba="casa" style="display:none">
             <summary>
               <div class="dash-head-text">
                 <h2>🛍️ Escala da lojinha <span class="dash-badge" id="dash-cnt-lojinha"></span></h2>
@@ -506,7 +569,7 @@ footer{text-align:center;margin-top:30px;color:var(--text3);font-size:12px}
           </details>
 
           <!-- Despensa — atalho pra página standalone (só pra quem gerencia) -->
-          <a href="https://hunterms.github.io/terreiro-admin/despensa.html" target="_blank" rel="noopener" class="dash-secao dash-link" id="dash-sec-despensa" style="display:none;text-decoration:none;color:inherit">
+          <a href="https://hunterms.github.io/terreiro-admin/despensa.html" target="_blank" rel="noopener" class="dash-secao dash-link" id="dash-sec-despensa" data-aba="casa" style="display:none;text-decoration:none;color:inherit">
             <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
               <div class="dash-head-text">
                 <h2>🏺 Despensa</h2>
@@ -574,10 +637,9 @@ let APP = {
   filhos: [],
   funcoes: [],
   filhoAtual: null,
-  // Os 4 dígitos de quem já provou, nesta aba, em memória. Não vai pro
-  // sessionStorage: as rotas do Worker pedem a prova a cada chamada, e gravar
-  // no disco devolveria ao navegador o segredo que acabou de sair de lá.
-  provaPorFilho: {},
+  // Quem está logado, e com que token. O PIN NUNCA entra aqui nem no disco:
+  // ele vira uma sessão assinada no primeiro acerto, e é ela que viaja depois.
+  sessao: null,
   disp: {}, // {YYYY-MM: {datas:[], funcoes:[], obs:''}}
   escalas: [],
   tarefas: [], // kanban: cards onde o filho atual é responsável (filtrado em selecionarFilho)
@@ -612,6 +674,15 @@ function dataEfetivaAloc(es, aloc, funcoes) {
     APP.cfgAgendamento = cSnapBoot.exists() ? cSnapBoot.data() : null;
     APP.filhos = Filhos.ativos(await Filhos.carregarFilhos(APP.cfgAgendamento));
 
+    // Sessão de 30 dias: quem já entrou não digita PIN de novo a cada visita.
+    // Se o token tiver expirado, a primeira chamada ao Worker devolve 403 e a
+    // tela pede o PIN — não precisa conferir aqui, e conferir custaria uma
+    // viagem a mais na abertura.
+    const guardada = Filhos.sessaoGuardada();
+    if (guardada && APP.filhos.some(f => f.id === guardada.filho_id)) {
+      APP.sessao = guardada;
+    }
+
     const funSnap = await getDocs(collection(dbPvd,'adm_funcoes'));
     APP.funcoes = funSnap.docs.map(d => ({ id:d.id, ...d.data() })).filter(fn => !fn.arquivada);
 
@@ -632,6 +703,23 @@ function dataEfetivaAloc(es, aloc, funcoes) {
     renderEventosFilho();
     renderGiras();
     renderRega();
+
+    // Quem tem sessão válida entra direto, sem passar pelo seletor de nomes.
+    // É o que faz a área parecer um app instalado e não um formulário: abre já
+    // aberta. Se o token expirou, selecionarFilho pede o PIN.
+    // Sessão expirada volta 403 na primeira chamada. O filhos.js já apagou o
+    // token do disco; aqui a tela volta pro seletor e diz por quê, em vez de
+    // ficar bonita e quebrada.
+    Filhos.quandoExpirar(() => {
+      if (!APP.sessao) return;
+      APP.sessao = null;
+      APP.filhoAtual = null;
+      $('#filho-area').style.display = 'none';
+      $('#filho-sel-card').style.display = '';
+      toast('Sua sessão expirou. Entra de novo com o seu PIN.','err');
+    });
+
+    if (APP.sessao) selecionarFilho(APP.sessao.filho_id);
   } catch(e) {
     console.error(e);
     $('#loading').innerHTML = `<div style="color:var(--red)">Erro ao carregar. Recarregue a página.</div>`;
@@ -642,7 +730,7 @@ async function carregarEventos() {
   try {
     const evSnap = await getDocs(collection(dbCand,'eventos'));
     APP.eventos = evSnap.docs.map(d => ({ id:d.id, ...d.data() }));
-  } catch(e) { console.warn('Erro eventos', e); APP.eventos = []; }
+  } catch(e) { Filhos.avisarFalha('as giras e eventos', e); APP.eventos = []; }
 }
 
 async function carregarAvisos() {
@@ -651,7 +739,7 @@ async function carregarAvisos() {
     APP.avisos = avSnap.docs.map(d => ({ id:d.id, ...d.data() }))
       .filter(a => !a.arquivado)
       .sort((a,b) => (b.publicadoEm?.seconds||0) - (a.publicadoEm?.seconds||0));
-  } catch(e) { console.warn('Erro avisos', e); APP.avisos = []; }
+  } catch(e) { Filhos.avisarFalha('o mural de avisos', e); APP.avisos = []; }
 }
 
 async function carregarRegasDiarias() {
@@ -666,7 +754,7 @@ async function carregarEventoInscricoes() {
   try {
     const iSnap = await getDocs(collection(dbPvd,'evento_inscricoes'));
     APP.eventoInscricoes = iSnap.docs.map(d => ({ id:d.id, ...d.data() }));
-  } catch(e) { console.warn('Erro inscrições', e); APP.eventoInscricoes = []; }
+  } catch(e) { Filhos.avisarFalha('as inscrições em eventos', e); APP.eventoInscricoes = []; }
 }
 
 async function selecionarFilho(id) {
@@ -678,38 +766,33 @@ async function selecionarFilho(id) {
   const filho = APP.filhos.find(f => f.id === id);
   if(!filho) return;
 
-  // Autenticação: 4 últimos dígitos do telefone, conferidos NO WORKER.
+  // Autenticação: PIN de 4 números, conferido NO WORKER.
   //
   // A conferência era aqui, contra `filho.tel`, que esta página tinha baixado
   // do Firestore junto com a lista de nomes. Quem abrisse o devtools lia o
-  // telefone de todo mundo e entrava como qualquer um. Agora o telefone não sai
-  // do servidor, e é lá que os dígitos batem ou não.
-  const cached = sessionStorage.getItem(`auth_${id}`) === '1' && APP.provaPorFilho[id];
-  if(!cached) {
-    const entrada = prompt(`Olá ${filho.nome.split(' ')[0]}! Pra acessar sua área, digite os 4 últimos dígitos do seu celular cadastrado:`);
-    if(!entrada) { resetSearchSelect(); return; }
-    const limpa = entrada.replace(/\D/g,'').slice(-4);
-    const r = await Filhos.entrar(APP.cfgAgendamento, id, limpa);
-    if(!r.ok) {
-      alert(Filhos.explicar(r.erro));
-      resetSearchSelect();
-      return;
-    }
-    // A prova fica em memória, não em disco: as rotas do Worker pedem os 4
-    // dígitos a cada chamada, e gravar isso no navegador seria devolver ao
-    // disco justamente o que acabou de sair de lá.
-    APP.provaPorFilho[id] = limpa;
+  // telefone de todo mundo e entrava como qualquer um.
+  //
+  // Hoje o telefone não sai do servidor, e ele nem é mais a chave: quem já tem
+  // PIN entra só por ele. Quem não tem entra pelo telefone UMA vez e cria o PIN
+  // ali mesmo, sem escapatória — ver criarPinObrigatorio.
+  if (!APP.sessao || APP.sessao.filho_id !== id) {
+    const r = await autenticar(filho);
+    if (!r) { resetSearchSelect(); return; }
+
+    let sessao = r.sessao;
+    if (r.precisa_pin) sessao = await criarPinObrigatorio(filho, r.prova);
+
+    APP.sessao = { filho_id: id, sessao };
+    Filhos.guardarSessao(id, sessao);
     filho.tel = r.tel || '';
     filho.auth_email = r.auth_email || null;
-    sessionStorage.setItem(`auth_${id}`, '1');
   }
 
   APP.filhoAtual = filho;
   $('#filho-area').style.display = '';
   renderIdentityHero(filho);
   renderPushCard(filho);
-  renderEmailCapture(filho);
-  renderNascCapture(filho);
+  renderCadastro(filho);
   renderAniversariantes();
   const selectorCard = $('#filho-sel-card');
   if(selectorCard) selectorCard.style.display = 'none';
@@ -738,7 +821,7 @@ async function selecionarFilho(id) {
     const todos = tSnap.docs.map(d => ({ id:d.id, ...d.data() })).filter(t => !t.arquivado && t.status !== 'done');
     APP.tarefas = todos.filter(t => (t.responsaveis||[]).includes(id));
     APP.listaAfazeres = todos.filter(t => t.lista_aberta && (t.responsaveis||[]).length === 0);
-  } catch(e) { console.warn('Erro tarefas', e); APP.tarefas = []; APP.listaAfazeres = []; }
+  } catch(e) { Filhos.avisarFalha('suas tarefas', e); APP.tarefas = []; APP.listaAfazeres = []; }
 
   // Perguntas: carrega ativas + respostas desse filho pra calcular pendentes
   //
@@ -753,7 +836,7 @@ async function selecionarFilho(id) {
     const lidas = await Promise.all(APP.perguntas.map(p =>
       getDoc(doc(dbPvd,'adm_respostas', `${p.id}__${id}`)).catch(() => null)));
     APP.minhasRespostas = lidas.filter(s => s?.exists()).map(s => ({ id:s.id, ...s.data() }));
-  } catch(e) { console.warn('Erro perguntas', e); APP.perguntas = []; APP.minhasRespostas = []; }
+  } catch(e) { Filhos.avisarFalha('as perguntas da casa', e); APP.perguntas = []; APP.minhasRespostas = []; }
 
   // Lojinha gerentes: carregam TODAS escalas de gira (mesmo padrão da aba "escala"
   // do admin). Cada doc é { tipo:'gira', evento_id, alocacoes:[{funcao_id,filho_id,...}] }.
@@ -763,7 +846,7 @@ async function selecionarFilho(id) {
       const lSnap = await getDocs(collection(dbPvd,'adm_escalas'));
       APP.lojinhaEscalas = lSnap.docs.map(d => ({ id:d.id, ...d.data() }))
         .filter(es => es.tipo === 'gira');
-    } catch(e) { console.warn('Erro escalas gira', e); APP.lojinhaEscalas = []; }
+    } catch(e) { Filhos.avisarFalha('a escala da lojinha', e); APP.lojinhaEscalas = []; }
   } else { APP.lojinhaEscalas = []; }
 
   // Despensa: atalho aparece pra quem gerencia
@@ -778,7 +861,10 @@ async function selecionarFilho(id) {
     } catch(e) { console.warn('cfg agendamento', e); APP.cfgAgendamento = {}; }
   }
 
+  ligarAbas();
+  renderRega();   // agora com sessão: a escala aparece
   renderMensalidade(); // não bloqueia: consulta o Worker e se mostra sozinha
+  renderAvisosInbox(); // idem — e é a única coisa que alcança quem não tem email
   renderDisp();
   renderEsc();
   renderTarefas();
@@ -886,6 +972,118 @@ function _pickSearch(id){
   $('#filho-results')?.classList.remove('open');
   selecionarFilho(id);
 }
+// ── A TELA DE PIN ─────────────────────────────────────────────────────────
+//
+// Era um `prompt()`. Ele não mascara o que se digita, alguns navegadores
+// bloqueiam sem avisar, e ele não consegue dizer "erraram 4 vezes, falta 1".
+// Esta é a porta de 56 pessoas — merece ser uma tela.
+//
+// Devolve o que foi digitado, ou null se a pessoa desistiu. Quem chama decide
+// o que fazer com o valor; esta função não sabe o que é certo nem errado.
+function pedirPin({ titulo, sub, iniciais, dica, botao = 'Entrar', cancelavel = true }) {
+  return new Promise((resolve) => {
+    const tela = document.createElement('div');
+    tela.className = 'pin-tela';
+    tela.innerHTML = `
+      <div class="pin-caixa">
+        ${iniciais ? `<div class="pin-av">${iniciais}</div>` : ''}
+        <div class="pin-tit">${titulo}</div>
+        <div class="pin-sub">${sub}</div>
+        <input class="pin-campo" id="pin-campo" type="tel" inputmode="numeric" maxlength="4"
+               autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${titulo}"/>
+        <div class="pin-erro" id="pin-erro" role="alert"></div>
+        <button class="btn btn-primary" id="pin-ok" style="width:100%" disabled>${botao}</button>
+        ${cancelavel ? '<button class="btn" id="pin-nao" style="width:100%;margin-top:9px">Voltar</button>' : ''}
+        ${dica ? `<div class="pin-dica">${dica}</div>` : ''}
+      </div>`;
+    document.body.appendChild(tela);
+
+    const campo = tela.querySelector('#pin-campo');
+    const ok = tela.querySelector('#pin-ok');
+    const fechar = (v) => { tela.remove(); resolve(v); };
+
+    campo.oninput = () => {
+      campo.value = campo.value.replace(/\D/g, '').slice(0, 4);
+      campo.classList.remove('erro');
+      tela.querySelector('#pin-erro').textContent = '';
+      ok.disabled = campo.value.length !== 4;
+    };
+    campo.onkeydown = (e) => { if (e.key === 'Enter' && campo.value.length === 4) ok.click(); };
+    ok.onclick = () => fechar(campo.value);
+    tela.querySelector('#pin-nao')?.addEventListener('click', () => fechar(null));
+    // Escape só fecha o que pode ser fechado. A criação de PIN não pode.
+    if (cancelavel) {
+      tela.tabIndex = -1;
+      tela.onkeydown = (e) => { if (e.key === 'Escape') fechar(null); };
+    }
+    setTimeout(() => campo.focus(), 60);
+  });
+}
+
+const iniciaisDe = (nome) => (nome || '?').trim().split(/\s+/).slice(0, 2).map((x) => x[0]).join('').toUpperCase();
+
+// ── ENTRAR ────────────────────────────────────────────────────────────────
+//
+// Laço, e não uma tentativa: errar o PIN é comum e normal, e mandar a pessoa
+// recomeçar do seletor de nomes por causa de um dedo torto é castigo.
+// A trava de 5 erros mora no Worker; aqui só se mostra o que ele responde.
+async function autenticar(filho) {
+  const primeiro = (filho.nome || '').split(' ')[0];
+  let tela = null, resolver = null;
+
+  for (;;) {
+    const p = pedirPin({
+      iniciais: iniciaisDe(filho.nome),
+      titulo: tela ? `Oi de novo, ${primeiro}` : `Oi, ${primeiro}`,
+      sub: filho._temPin === false
+        ? 'Só nesta primeira vez: os <b>4 últimos dígitos</b> do celular que a casa tem no seu cadastro.'
+        : 'Seu PIN de 4 números.',
+      dica: 'Não lembra? Fala com a administração que ela destrava.',
+    });
+    tela = true;
+    const digitado = await p;
+    if (digitado === null) return null;
+
+    const r = await Filhos.entrar(APP.cfgAgendamento, filho.id, digitado);
+    if (r.ok) return { ...r, prova: digitado };
+
+    // 403 com "usando: telefone" quer dizer que ela ainda não tem PIN — a
+    // próxima volta do laço já pede do jeito certo.
+    if (r.usando === 'telefone') filho._temPin = false;
+    alert(Filhos.explicar(r.erro));
+    if (r.status === 429) return null;   // travado: insistir só piora
+  }
+}
+
+// ── CRIAR O PIN, QUE É OBRIGATÓRIO ────────────────────────────────────────
+//
+// Ninguém tem PIN hoje. Então é uma vez só, pra todo mundo, e a partir dali o
+// telefone não abre mais porta. Enquanto existir "agora não", metade da casa
+// fica no modelo velho e o buraco continua aberto pra essa metade.
+//
+// Por isso `cancelavel: false`: esta é a única tela do sistema sem saída. E é
+// por isso que o admin ganhou o botão de zerar no mesmo dia.
+async function criarPinObrigatorio(filho, prova) {
+  for (;;) {
+    const escolhido = await pedirPin({
+      iniciais: '🔒',
+      titulo: 'Agora crie o seu PIN',
+      sub: 'Quatro números que só você sabe. É com ele que você entra daqui pra frente, e o telefone deixa de valer.',
+      botao: 'Guardar e entrar',
+      cancelavel: false,
+      dica: 'Evita 1234 e datas de aniversário. Esqueceu? A administração destrava.',
+    });
+    if (escolhido === null) continue;   // não há como desistir, e é de propósito
+
+    try {
+      const r = await Filhos.criarPin(APP.cfgAgendamento, filho.id, prova, escolhido);
+      if (r?.sessao) return r.sessao;
+    } catch (e) {
+      alert(Filhos.explicar(e.message));
+    }
+  }
+}
+
 function resetSearchSelect(){
   const inp = $('#filho-input');
   if(inp) inp.value = '';
@@ -894,61 +1092,147 @@ function resetSearchSelect(){
   _search.results = [];
 }
 
-function renderNascCapture(f) {
-  const card = $('#nasc-capture-card');
-  if (!card) return;
-  if (f.data_nascimento) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  const inp = $('#nc-data');
-  const btn = $('#nc-save');
-  const err = $('#nc-err');
-  // Max = hoje (não faz sentido data futura)
-  const hoje = new Date(); const hojeISO = hoje.getFullYear()+'-'+String(hoje.getMonth()+1).padStart(2,'0')+'-'+String(hoje.getDate()).padStart(2,'0');
-  if (inp) { inp.value = ''; inp.max = hojeISO; }
-  if (err) err.style.display = 'none';
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = 'Salvar';
-    btn.onclick = async () => {
-      const data = (inp.value || '').trim();
-      err.style.display = 'none';
-      if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data)) {
-        err.textContent = 'Selecione uma data válida.';
-        err.style.display = 'block';
-        return;
-      }
-      if (data > hojeISO) {
-        err.textContent = 'Data não pode ser no futuro.';
-        err.style.display = 'block';
-        return;
-      }
-      const ano = Number(data.slice(0,4));
-      if (ano < 1900) {
-        err.textContent = 'Confere o ano.';
-        err.style.display = 'block';
-        return;
-      }
-      btn.disabled = true; btn.textContent = 'Salvando…';
-      try {
-        // Pelo Worker: as rules de fin_filhos nunca deixaram o público
-        // escrever, então este Salvar dava "Erro ao salvar" desde sempre.
-        await Filhos.salvarMeuCadastro(APP.cfgAgendamento, f.id, APP.provaPorFilho[f.id], { data_nascimento: data });
-        f.data_nascimento = data;
-        const idx = APP.filhos.findIndex(x => x.id === f.id);
-        if (idx >= 0) APP.filhos[idx].data_nascimento = data;
-        toast('Data de nascimento salva 🎂','ok');
-        card.style.display = 'none';
-        renderAniversariantes(); // pode entrar na lista do mês
-      } catch(e) {
-        console.error(e);
-        err.textContent = 'Erro ao salvar. Tenta de novo.';
-        err.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Salvar';
-      }
-    };
-  }
-  if (inp) inp.onkeydown = e => { if (e.key === 'Enter') btn.click(); };
+// ── O CADASTRO QUE SE COMPLETA ────────────────────────────────────────────
+//
+// Eram dois cards fixos: data de nascimento e email. Viraram uma lista, porque
+// o buraco não é só esses dois. Medido em 01/08, nos 56 ativos: 31 sem email,
+// 21 sem nascimento, 19 sem dizer se trabalham CLT.
+//
+// ── A LINHA QUE NÃO SE CRUZA ──────────────────────────────────────────────
+// Só entra aqui o que o FILHO é dono da resposta. Faltam `postos` em 11 e
+// `padrinho_id` em 22, e esses NÃO entram: deixar alguém declarar o próprio
+// posto é deixar a pessoa se dar uma função na casa. Valor e prazo, idem —
+// são combinados com o Pai.
+//
+// ── AS TRÊS REGRAS ────────────────────────────────────────────────────────
+// Uma pergunta por vez, nunca um formulário. Sete campos numa tela é um muro;
+// um campo com um botão é uma pergunta.
+//
+// Toda pergunta diz PRA QUE serve. "Qual seu email" é burocracia; "pra te
+// avisar antes de vencer" é motivo. Sem isso, as 31 pessoas sem email
+// continuam sem.
+//
+// Pular sempre existe e nunca é definitivo: volta a perguntar depois de uma
+// semana. Nada aqui bloqueia a área.
+// O EMAIL SAIU desta lista em 01/08. Ele não é mais canal de aviso — tudo vai
+// por push, e o registro que garante a entrega é a caixa de avisos. Instalar o
+// app e receber notificação não pede email nenhum.
+//
+// Então parar de pedir não é abrir mão de alcance: é parar de coletar um dado
+// que não usamos mais. Quem já cadastrou continua com ele no cadastro, e o
+// admin continua podendo escrever — só não perguntamos mais.
+const PERGUNTAS_CADASTRO = [
+  {
+    campo: 'data_nascimento', emoji: '🎂', tipo: 'data',
+    falta: (f) => !f.data_nascimento,
+    titulo: 'Quando você nasceu?',
+    porque: 'A casa comemora aniversário da galera. Sem a data, você fica de fora da lista do mês.',
+  },
+  {
+    campo: 'trabalha_clt', emoji: '🕗', tipo: 'sim_nao',
+    falta: (f) => f.trabalha_clt === undefined || f.trabalha_clt === null,
+    titulo: 'Você trabalha de carteira assinada?',
+    porque: 'Serve pra montar escala sem te colocar em limpeza de dia útil de manhã.',
+  },
+  {
+    campo: 'mora_perto', emoji: '🚌', tipo: 'sim_nao',
+    falta: (f) => f.mora_perto === undefined || f.mora_perto === null,
+    titulo: 'Você mora perto do terreiro?',
+    porque: 'Ajuda a casa a pensar carona e a não te escalar em dia impossível.',
+  },
+];
+
+const PULOU = 'candieiro_pulou';
+const UMA_SEMANA = 7 * 86400000;
+
+function pulados() {
+  try { return JSON.parse(localStorage.getItem(PULOU) || '{}'); } catch { return {}; }
 }
+function pular(campo) {
+  const p = pulados(); p[campo] = Date.now();
+  try { localStorage.setItem(PULOU, JSON.stringify(p)); } catch {}
+}
+function foiPuladoAgora(campo) {
+  const q = pulados()[campo];
+  return !!q && (Date.now() - q) < UMA_SEMANA;
+}
+
+function renderCadastro(f) {
+  const card = $('#cadastro-card');
+  if (!card || !f) return;
+
+  const faltando = PERGUNTAS_CADASTRO.filter((p) => p.falta(f));
+  const agora = faltando.find((p) => !foiPuladoAgora(p.campo));
+  if (!agora) { card.style.display = 'none'; return; }
+
+  const quantas = faltando.length;
+  const feitas = PERGUNTAS_CADASTRO.length - quantas;
+  const volta = Math.round((feitas / PERGUNTAS_CADASTRO.length) * 360);
+
+  const campoHtml = {
+    data: `<input class="fi" id="cad-val" type="date" max="${hojeISO()}" style="flex:1;min-width:160px;padding:10px 12px;font-size:14px"/>`,
+    email: `<input class="fi" id="cad-val" type="email" placeholder="seu@email.com" autocomplete="email" style="flex:1;min-width:160px;padding:10px 12px;font-size:14px"/>`,
+    sim_nao: `<button class="btn" id="cad-sim" style="flex:1;padding:10px">Sim</button><button class="btn" id="cad-nao" style="flex:1;padding:10px">Não</button>`,
+  }[agora.tipo];
+
+  card.style.display = '';
+  card.innerHTML = `
+    <div style="padding:14px 16px;background:linear-gradient(135deg,rgba(212,168,67,.11),rgba(212,168,67,.02));border:1px solid rgba(212,168,67,.28);border-radius:12px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:34px;height:34px;flex-shrink:0;border-radius:50%;background:conic-gradient(var(--gold) 0deg ${volta}deg,rgba(255,255,255,.08) ${volta}deg 360deg);display:flex;align-items:center;justify-content:center">
+          <div style="width:25px;height:25px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--gold)">${quantas}</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="t-titulo">${quantas === 1 ? 'Falta uma coisa no seu cadastro' : `Faltam ${quantas} coisas no seu cadastro`}</div>
+          <div style="font-size:11.5px;color:var(--text2);margin-top:2px">Menos de um minuto</div>
+        </div>
+      </div>
+      <div style="margin-top:13px;padding-top:13px;border-top:1px solid rgba(212,168,67,.2)">
+        <div style="display:flex;align-items:flex-start;gap:9px">
+          <span style="font-size:19px;line-height:1.2">${agora.emoji}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13.5px;font-weight:650;line-height:1.35">${agora.titulo}</div>
+            <div class="t-corpo">${agora.porque}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:11px">${campoHtml}</div>
+        <div id="cad-err" class="erro-campo"></div>
+        <div style="display:flex;gap:8px;margin-top:9px">
+          ${agora.tipo === 'sim_nao' ? '' : '<button class="btn btn-primary" id="cad-save" style="flex:1;padding:10px">Salvar</button>'}
+          <button class="btn" id="cad-pular" style="padding:10px 14px;${agora.tipo === 'sim_nao' ? 'flex:1' : ''}">Pular</button>
+        </div>
+      </div>
+    </div>`;
+
+  const erro = (m) => { const e = $('#cad-err'); e.textContent = m; e.style.display = 'block'; };
+
+  const salvar = async (valor) => {
+    $('#cad-err').style.display = 'none';
+    try {
+      await Filhos.salvarMeuCadastro(APP.cfgAgendamento, APP.sessao, { [agora.campo]: valor });
+      f[agora.campo] = valor;
+      const i = APP.filhos.findIndex((x) => x.id === f.id);
+      if (i >= 0) APP.filhos[i][agora.campo] = valor;
+      toast('Guardado, obrigado ✓','ok');
+      renderCadastro(f);                     // já mostra a próxima, se houver
+      if (agora.campo === 'data_nascimento') renderAniversariantes();
+    } catch (e) {
+      erro(Filhos.explicar(e.message));
+    }
+  };
+
+  $('#cad-pular').onclick = () => { pular(agora.campo); renderCadastro(f); };
+  $('#cad-sim')?.addEventListener('click', () => salvar(true));
+  $('#cad-nao')?.addEventListener('click', () => salvar(false));
+  $('#cad-save')?.addEventListener('click', () => {
+    const v = $('#cad-val').value.trim();
+    if (!v) { erro('Preenche o campo antes de salvar.'); return; }
+    salvar(v);
+  });
+}
+
+const hojeISO = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+
 
 function renderAniversariantes() {
   const card = $('#aniversariantes-card');
@@ -980,50 +1264,6 @@ function renderAniversariantes() {
       </div>
     `;
   }).join('');
-}
-
-function renderEmailCapture(f) {
-  const card = $('#email-capture-card');
-  if (!card) return;
-  // Mostra só pra quem ainda não tem email cadastrado
-  if (f.auth_email) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  const inp = $('#ec-email');
-  const btn = $('#ec-save');
-  const err = $('#ec-err');
-  if (inp) inp.value = '';
-  if (err) err.style.display = 'none';
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = 'Salvar';
-    btn.onclick = async () => {
-      const email = (inp.value || '').trim().toLowerCase();
-      err.style.display = 'none';
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        err.textContent = 'Email inválido. Use o formato seu@email.com.';
-        err.style.display = 'block';
-        return;
-      }
-      btn.disabled = true; btn.textContent = 'Salvando…';
-      try {
-        // Mesmo motivo do card de nascimento: escrita pública em fin_filhos
-        // sempre foi negada, e este botão nunca salvou nada.
-        await Filhos.salvarMeuCadastro(APP.cfgAgendamento, f.id, APP.provaPorFilho[f.id], { auth_email: email });
-        // Atualiza estado local pra esconder o card
-        f.auth_email = email;
-        const idx = APP.filhos.findIndex(x => x.id === f.id);
-        if (idx >= 0) APP.filhos[idx].auth_email = email;
-        toast('Email salvo. Em breve você vai receber os lembretes ✓','ok');
-        card.style.display = 'none';
-      } catch(e) {
-        console.error(e);
-        err.textContent = 'Erro ao salvar. Tenta de novo em alguns segundos.';
-        err.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Salvar';
-      }
-    };
-  }
-  if (inp) inp.onkeydown = e => { if (e.key === 'Enter') btn.click(); };
 }
 
 function renderIdentityHero(f) {
@@ -1178,6 +1418,158 @@ async function renderPushCard(filho) {
   };
 }
 
+// ── AS ABAS ───────────────────────────────────────────────────────────────
+//
+// A barra só aparece depois de entrar: antes disso a página é o seletor de
+// nomes mais o mural público, e cinco abas ali seriam navegação pra lugar
+// nenhum.
+//
+// Mostrar e esconder por atributo, e não movendo nó no DOM. Mover doze blocos
+// dentro de um arquivo de 2900 linhas é exatamente onde se perde um listener
+// sem ninguém notar — e o listener perdido só aparece no dia em que alguém
+// clica.
+//
+// Uma seção que a pessoa não pode ver (despensa sem gerência, afilhados sem
+// afilhado) continua com `display:none` decidido pelo dono dela. A aba nunca
+// mostra o que o papel esconde: quem manda é a regra mais restritiva.
+let _abaAtual = 'inicio';
+
+function mostrarAba(nome) {
+  _abaAtual = nome;
+  document.querySelectorAll('.aba-btn').forEach((b) => {
+    b.setAttribute('aria-selected', String(b.dataset.ir === nome));
+  });
+  // A aba esconde por CLASSE, e nunca escreve em `style.display`.
+  //
+  // Isso não é preciosismo: catorze lugares desta página já decidem
+  // `style.display` por conta própria — despensa só pra quem tem gerência,
+  // afilhados só pra padrinho, mensalidade só se o checkout estiver ligado.
+  // Se a aba escrevesse display, trocar de aba REVELARIA o que o papel esconde.
+  //
+  // Com classe + `!important`, as duas decisões convivem: a aba diz "não é
+  // aqui", o dono da seção diz "não é pra você", e basta uma delas pra sumir.
+  document.querySelectorAll('[data-aba]').forEach((sec) => {
+    const dessaAba = sec.dataset.aba === nome;
+    sec.classList.toggle('fora-da-aba', !dessaAba);
+    if (dessaAba && sec.tagName === 'DETAILS') sec.open = true;
+  });
+  // Início não tem seção própria: é o mural, os eventos e o cartão de cadastro,
+  // que vivem fora do sistema de abas.
+  ['avisos-container', 'eventos-filho-container', 'giras-container',
+   'aniversariantes-card', 'topo-pendencias', 'actions-wrap'].forEach((id) => {
+    document.getElementById(id)?.classList.toggle('fora-da-aba', nome !== 'inicio');
+  });
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  if (nome === 'avisos') renderAvisosInbox();
+}
+
+function ligarAbas() {
+  document.querySelectorAll('.aba-btn').forEach((b) => {
+    b.onclick = () => mostrarAba(b.dataset.ir);
+  });
+  $('#abas').style.display = 'flex';
+  document.body.classList.add('com-abas');
+  mostrarAba('inicio');
+}
+
+// ── A CAIXA DE AVISOS ─────────────────────────────────────────────────────
+//
+// Existe por um número: dos 56 ativos, 31 não têm email, e o push exige
+// instalar (no iPhone, obrigatoriamente). Mais da metade da casa não tinha
+// canal garantido, e a notificação era o único registro dela mesma — celular
+// desligado e a informação sumia, sem ninguém saber que sumiu.
+//
+// Aqui o recado fica. Quem não recebeu abre e lê.
+// O sino no cabeçalho. A barra de abas some quando a página rola, e um aviso
+// novo tem que ser alcançável de onde a pessoa estiver — inclusive antes de ela
+// descobrir que existe uma aba chamada Avisos.
+window.irParaAvisos = function() { mostrarAba('avisos'); };
+
+function pontoDaAba(n) {
+  const sino = document.getElementById('id-sino');
+  if (sino) sino.textContent = n > 0 ? `🔔 ${n > 9 ? '9+' : n}` : '🔔';
+  const p = document.getElementById('aba-pt-avisos');
+  if (!p) return;
+  p.textContent = n > 9 ? '9+' : String(n || '');
+  p.style.display = n > 0 ? 'flex' : 'none';
+}
+
+async function renderAvisosInbox() {
+  const sec = $('#dash-sec-avisos');
+  const cont = $('#avisos-inbox');
+  const cnt = $('#dash-cnt-avisos');
+  if (!sec || !cont || !APP.sessao) { if (sec) sec.style.display = 'none'; return; }
+
+  sec.style.display = '';
+  cont.innerHTML = '<div style="color:var(--text3);font-size:12.5px;padding:10px 0">Carregando...</div>';
+
+  let d;
+  try {
+    d = await Filhos.avisos(APP.cfgAgendamento, APP.sessao);
+  } catch (e) {
+    cont.innerHTML = `<div style="color:var(--text3);font-size:12.5px;padding:10px 0">Não consegui carregar seus avisos agora. ${Filhos.explicar(e.message)}</div>`;
+    return;
+  }
+
+  const lista = d.avisos || [];
+  cnt.textContent = d.nao_lidos ? `${d.nao_lidos} novo${d.nao_lidos === 1 ? '' : 's'}` : '';
+  cnt.className = d.nao_lidos ? 'dash-badge' : 'dash-badge muted';
+  pontoDaAba(d.nao_lidos);
+
+  if (!lista.length) {
+    cont.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:14px 0;line-height:1.5">Nada por aqui ainda. Quando a casa te avisar de alguma coisa, ela fica guardada nesta lista.</div>';
+    return;
+  }
+
+  const quando = (iso) => {
+    if (!iso) return '';
+    const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+    if (dias <= 0) return 'hoje';
+    if (dias === 1) return 'ontem';
+    if (dias < 7) return `há ${dias} dias`;
+    return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+  };
+
+  let html = '', jaMarcouDivisor = false;
+  for (const n of lista) {
+    if (n.lido && !jaMarcouDivisor && lista.some(x => !x.lido)) {
+      html += '<div class="av-divisor">Antes disso</div>';
+      jaMarcouDivisor = true;
+    }
+    html += `
+      <div class="av-item ${n.lido ? '' : 'novo'}">
+        <div class="av-ponto"></div>
+        <div class="av-corpo">
+          <div class="av-tit">${escapaHtml(n.titulo)}</div>
+          ${n.corpo ? `<div class="av-txt">${escapaHtml(n.corpo)}</div>` : ''}
+          <div class="av-quando">${quando(n.criadoEm)}${n.da_casa ? ' · aviso da casa' : ''}</div>
+        </div>
+      </div>`;
+  }
+  cont.innerHTML = html;
+
+  // Abriu, leu. Marcar num botão separado é pedir um gesto que ninguém faz, e
+  // aí o contador fica vermelho pra sempre e a pessoa aprende a ignorar.
+  if (d.nao_lidos) {
+    try {
+      await Filhos.marcarAvisosLidos(APP.cfgAgendamento, APP.sessao);
+      cnt.textContent = '';
+      cnt.className = 'dash-badge muted';
+      pontoDaAba(0);
+    } catch (e) { console.warn('marcar lidos', e); }
+  }
+}
+
+// O título e o corpo do aviso vêm do que o admin escreveu no mural. É texto de
+// gente, não de sistema, e entra em innerHTML — então escapa.
+//
+// Nome por extenso porque `esc` já é usado como variável local de escala mais
+// abaixo. Duas coisas com o mesmo nome curto e significados diferentes é como
+// se escreve um bug que ninguém acha.
+const escapaHtml = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => (
+  { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+));
+
 // ── MENSALIDADE ───────────────────────────────────────────────────────────
 // Esta página NÃO lê fin_mensalidade_pedidos: a collection é fechada de
 // propósito, senão qualquer visitante veria quem está atrasado na casa. Quem
@@ -1194,18 +1586,16 @@ async function renderMensalidade() {
   const ativo = APP.cfgAgendamento?.checkout_ativo;
   if (!worker || !ativo) { sec.style.display = 'none'; return; }
 
-  // A prova é a que a pessoa digitou no /entrar, guardada em memória. Não
-  // recalcula de `f.tel`: o telefone só existe aqui porque o Worker devolveu
-  // depois da prova, e depender dele seria depender de um efeito colateral.
-  const tel4 = APP.provaPorFilho[f.id] || '';
-  if (!tel4) { sec.style.display = 'none'; return; }
+  // Quem prova agora é a sessão assinada, não o PIN. Ela vale 30 dias e o
+  // Worker confere a assinatura a cada chamada.
+  if (!APP.sessao) { sec.style.display = 'none'; return; }
 
   let d;
   try {
     const resp = await fetch(worker.replace(/\/+$/, '') + '/mensalidade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filho_id: f.id, tel4 })
+      body: JSON.stringify(APP.sessao)
     });
     d = await resp.json();
     if (!resp.ok) throw new Error(d?.error || resp.status);
@@ -1250,14 +1640,19 @@ async function renderMensalidade() {
   }
 
   const atrasado = d.multa > 0;
-  // "em atraso" acusa a pessoa; "vencida" descreve a data. A diferença é quem
-  // está errado na frase — e ninguém aqui está devendo favor a ninguém.
-  cnt.textContent = atrasado ? 'vencida' : 'em aberto';
-  cnt.className = 'dash-badge';
+  // Três estados, e a diferença entre os dois primeiros é a conversa toda:
+  // quem está DENTRO do prazo não deve nada, e a tela não pode dar a entender
+  // que deve. Do dia 1 até o vencimento, pagar é adiantar, não quitar.
+  //
+  // E "em atraso" acusa a pessoa; "vencida" descreve a data. A diferença é
+  // quem está errado na frase — ninguém aqui deve favor a ninguém.
+  const emDia = !atrasado && !!d.vencimento && hojeISO() <= d.vencimento;
+  cnt.textContent = atrasado ? 'vencida' : (emDia ? 'em dia' : 'em aberto');
+  cnt.className = atrasado ? 'dash-badge' : 'dash-badge muted';
 
   cont.innerHTML = `
     <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:12px;overflow:hidden">
-      <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-weight:700">Sua contribuição de ${mes}</div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-weight:700">Sua contribuição de ${mes}${emDia ? ' · em dia' : ''}</div>
       <div style="padding:16px">
         <div class="linha-valor">
           <span style="color:var(--text2)">Contribuição</span><span>${brl(d.base)}</span>
@@ -1271,10 +1666,11 @@ async function renderMensalidade() {
           <span style="font-size:24px;font-weight:800;color:var(--gold);line-height:1">${brl(d.valor)}</span>
         </div>
         ${d.vencimento ? `<div style="font-size:12px;color:var(--text3);text-align:right;margin-top:6px">${atrasado ? 'venceu' : 'vence'} em ${new Date(d.vencimento + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}</div>` : ''}
+        ${emDia ? `<div class="aviso-box" style="margin-top:12px;padding:11px 13px;font-size:12.5px">Você está <strong style="color:var(--green)">em dia</strong>. Pode pagar em qualquer dia até o vencimento — adiantar não é obrigação, e deixar pra depois não muda nada.</div>` : ''}
         ${atrasado ? `<div class="t-nota">Se você já tinha combinado outra data, o acréscimo sai. Avisa a administração que a gente acerta.</div>` : ''}
       </div>
       <div style="padding:0 16px 16px">
-        <button id="mens-pagar" class="btn btn-primary" style="width:100%">💳 Pagar ${brl(d.valor)}</button>
+        <button id="mens-pagar" class="btn btn-primary" style="width:100%">💳 ${emDia ? 'Adiantar' : 'Pagar'} ${brl(d.valor)}</button>
         <div style="font-size:11.5px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.5">Cartão ou PIX pela InfinitePay. Cai na hora — o terreiro não precisa conferir extrato.</div>
       </div>
     </div>`;
@@ -1284,12 +1680,12 @@ async function renderMensalidade() {
     b.disabled = true; b.textContent = 'Abrindo o pagamento...';
     const res = await criarCheckout(APP.cfgAgendamento, 'men', d.doc_id);
     if (res) { location.href = res.url; return; }
-    b.disabled = false; b.textContent = `💳 Pagar ${brl(d.valor)}`;
+    b.disabled = false; b.textContent = `💳 ${emDia ? 'Adiantar' : 'Pagar'} ${brl(d.valor)}`;
     alert('Não consegui abrir o pagamento agora. Tenta de novo em instantes, ou fala com a administração.');
   };
 
   cont.insertAdjacentHTML('beforeend', blocoAjuste(d));
-  ligarAjuste(d, f, worker, tel4);
+  ligarAjuste(d, f, worker);
 }
 
 // ── "NÃO VOU CONSEGUIR PAGAR ESTE MÊS" ─────────────────────────────────────
@@ -1333,7 +1729,7 @@ function blocoAjuste(d) {
     </div>`;
 }
 
-function ligarAjuste(d, f, worker, tel4) {
+function ligarAjuste(d, f, worker) {
   const a = d.ajuste || {};
   if (!a.aberto) return;
 
@@ -1356,7 +1752,7 @@ function ligarAjuste(d, f, worker, tel4) {
     const resp = await fetch(worker.replace(/\/+$/, '') + '/mensalidade-ajuste', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filho_id: f.id, tel4, tipo, ...corpo })
+      body: JSON.stringify({ ...APP.sessao, tipo, ...corpo })
     });
     const r = await resp.json().catch(() => ({}));
     if (!resp.ok) { alert(r?.error || 'Não consegui enviar agora. Tenta de novo em instantes.'); return false; }
@@ -1411,10 +1807,19 @@ function renderActionItems() {
     const diff = Math.round((dt - hoje)/86400000);
     const dataLabel = diff===0 ? 'HOJE' : diff===1 ? 'AMANHÃ' : dt.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).toUpperCase().replace(/\./g,'');
     const tone = diff<=1 ? 'urgent' : diff<=7 ? 'info' : 'info';
+    // Quem mais está nessa noite entra já no resumo do topo. Saber que a
+    // Jacque e a Lais estarão lá muda a disposição de ir muito mais do que
+    // saber o horário — e essa informação já estava no mesmo documento.
+    const companhia = (prox.alocacoes||[])
+      .filter(a => a.filho_id && a.filho_id !== f.id)
+      .map(a => (APP.filhos.find(x => x.id === a.filho_id)?.nome || '').split(' ')[0])
+      .filter(Boolean);
+
     itens.push({
       icon:'🗓️', tone, sort: diff<=1 ? 1 : 5,
       title: `Próxima escala · ${dataLabel}`,
-      meta: `${nomeEv}${fn?` · ${fn.nome}`:''}${ev?.hora && diff>0 ?` · ${ev.hora}`:''}`,
+      meta: `${nomeEv}${fn?` · ${fn.nome}`:''}${ev?.hora && diff>0 ?` · ${ev.hora}`:''}`
+          + (companhia.length ? ` · com ${companhia.slice(0,3).join(', ')}${companhia.length>3?` e mais ${companhia.length-3}`:''}` : ''),
       target: 'dash-sec-escalas'
     });
   }
@@ -1718,6 +2123,21 @@ function renderEsc() {
     const dataReal = es.tipo === 'lojinha' ? es.data : dataEfetivaAloc(es, aloc, APP.funcoes);
     const ehDepois = dataReal !== es.data && es.tipo !== 'lojinha';
     const dataLabel = es.tipo === 'lojinha' ? `${fmtCurto(es.data)} – ${fmtCurto(es.data_fim)}` : fmtData(dataReal);
+
+    // Quem mais está nesta noite. O dado sempre esteve aqui — cada escala é uma
+    // lista de alocações — e ninguém tinha feito a pergunta. Sem isto a tela
+    // devolve uma tarefa; com isto, devolve uma noite com gente.
+    //
+    // Nome curto: numa casa de 56, "Márcia" resolve, e a lista cabe na linha.
+    const juntos = (es.alocacoes || [])
+      .filter(a => a.filho_id && a.filho_id !== f.id)
+      .map(a => {
+        const p = APP.filhos.find(x => x.id === a.filho_id);
+        const fnA = APP.funcoes.find(fn => fn.id === a.funcao_id);
+        return p ? { nome: (p.nome || '').split(' ')[0], funcao: fnA?.nome || null } : null;
+      })
+      .filter(Boolean);
+
     return `
       <div class="list-item">
         <div class="li-date">
@@ -1731,6 +2151,12 @@ function renderEsc() {
             ${ev?.hora && !ehDepois?`<span>${ev.hora}</span>`:''}
             ${ehDepois?`<span style="color:var(--gold);font-weight:600">dia seguinte à gira</span>`:''}
           </div>
+          ${juntos.length ? `
+            <div style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5">
+              <span style="color:var(--text3)">com você:</span>
+              ${juntos.slice(0,6).map(j => `<span title="${j.funcao||''}">${escapaHtml(j.nome)}</span>`).join(', ')}${juntos.length>6?` e mais ${juntos.length-6}`:''}
+            </div>` : `
+            <div style="font-size:12px;color:var(--text3);margin-top:6px">você é a única pessoa escalada</div>`}
         </div>
       </div>
     `;
@@ -2468,6 +2894,14 @@ function renderAvisos() {
 function renderRega() {
   const cont = $('#rega-container');
   if(!cont) return;
+
+  // A escala de rega é interna. Ela mostra quem reservou cada dia — nome de
+  // gente da casa, dia a dia — e isso não é informação de página aberta.
+  // Ficava visível antes de entrar por herança de quando esta página era só
+  // um calendário público.
+  const sec = $('#dash-sec-rega');
+  if (sec) sec.style.display = APP.sessao ? '' : 'none';
+  if (!APP.sessao) { cont.innerHTML = ''; return; }
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const hojeStr = hoje.toISOString().slice(0,10);
 
@@ -2586,8 +3020,9 @@ function toggleDiaRega(d) {
   renderRega();
 }
 
-// Libera um dia já reservado. Exige confirmação dos 4 últimos dígitos do
-// telefone do dono da reserva (mesma régua de auth da área pessoal).
+// Libera um dia já reservado. Só o DONO libera, provando com o PIN dele —
+// antes pedia os 4 dígitos do telefone da outra pessoa, o que ensinava a tela
+// a tratar telefone alheio como senha.
 async function liberarDiaRega(d) {
   const reserva = APP.regasDiarias[d];
   if(!reserva) { renderRega(); return; }
@@ -2596,7 +3031,7 @@ async function liberarDiaRega(d) {
   const dataFmt = new Date(d+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
 
   // Quem já provou ser o dono da reserva nesta aba não prova de novo.
-  const cached = filho ? !!APP.provaPorFilho[filho.id] : false;
+  const cached = !!(filho && APP.sessao && APP.sessao.filho_id === filho.id);
 
   if(!cached) {
     // Pedia os 4 dígitos do telefone DO OUTRO, e conferia contra o telefone que
@@ -2607,16 +3042,22 @@ async function liberarDiaRega(d) {
     // com outra pessoa passou a ser: ela libera, você reserva. É um passo a
     // mais, e é o passo que faz "meu dia" significar alguma coisa.
     if(!filho) { toast('Não achei o cadastro de quem reservou.','err'); return; }
-    const entrada = prompt(`O dia ${dataFmt} está reservado por ${reserva.filho_nome}.\n\nSe for você, digite os 4 últimos dígitos do SEU celular pra liberar:`);
-    if(!entrada) return;
-    const r = await Filhos.entrar(APP.cfgAgendamento, filho.id, entrada.replace(/\D/g,'').slice(-4));
+    const digitado = await pedirPin({
+      iniciais: iniciaisDe(filho.nome),
+      titulo: 'Liberar este dia',
+      sub: `O dia ${dataFmt} está com <b>${reserva.filho_nome}</b>. Se for você, confirme com o seu PIN.`,
+      botao: 'Liberar o dia',
+    });
+    if(!digitado) return;
+    const r = await Filhos.entrar(APP.cfgAgendamento, filho.id, digitado);
     if(!r.ok) {
       toast(r.erro === 'não confere'
         ? `Só ${nomePrim} pode liberar este dia. Peça pra ela abrir a área dela e liberar.`
         : Filhos.explicar(r.erro), 'err');
       return;
     }
-    APP.provaPorFilho[filho.id] = entrada.replace(/\D/g,'').slice(-4);
+    APP.sessao = { filho_id: filho.id, sessao: r.sessao };
+    Filhos.guardarSessao(filho.id, r.sessao);
   } else {
     // Já autenticado — confirma textualmente pra evitar liberar sem querer
     if(!confirm(`Liberar o dia ${dataFmt} (atualmente com ${reserva.filho_nome})?`)) return;
@@ -2683,69 +3124,73 @@ function setSubTab(_t) { /* deprecated */ }
 async function renderReembolso() {
   const f = APP.filhoAtual;
   if(!f) return;
-  const tel = (f.tel||'').replace(/\D/g,'');
   const formC = $('#reemb-form-container');
-  const histC = $('#reemb-historico');
-  formC.innerHTML = `
-    <form id="reemb-form" class="card" novalidate style="margin-top:14px">
-      <div class="fi-group" style="margin-bottom:10px">
-        <label style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Solicitante</label>
-        <div style="font-size:14.5px;color:var(--text);padding:6px 0">${f.nome}${tel?` · 📱 ${f.tel}`:''}</div>
-      </div>
-      <div class="fi-group" style="margin-bottom:10px">
-        <label>O que foi comprado <span style="color:var(--red)">*</span></label>
-        <textarea class="fi" id="re-desc" rows="2" placeholder="Ex: 5 velas brancas, 2kg de mandioca, ervas pro descarrego..." required></textarea>
-      </div>
-      <div class="row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div class="fi-group" style="margin:0">
-          <label>Valor (R$) <span style="color:var(--red)">*</span></label>
-          <input class="fi" id="re-valor" type="number" step="0.01" min="0.01" placeholder="0,00" required/>
+  if (formC) {
+    // Botão, e não o formulário aberto. Reembolso é evento raro — quem abre a
+    // aba quase sempre quer VER o que já pediu, não pedir de novo. Formulário
+    // sempre aberto empurra o histórico pra baixo da dobra e faz a tela
+    // parecer um pedido pendente que ninguém fez.
+    formC.innerHTML = `
+      <button class="btn btn-primary" id="reemb-abrir" style="width:100%;margin-top:14px">💸 Pedir reembolso</button>
+      <div class="t-nota" style="text-align:center">Comprou algo pra casa do seu bolso? A administração devolve por PIX.</div>`;
+    $('#reemb-abrir').onclick = abrirModalReembolso;
+  }
+  carregarHistoricoReemb();
+}
+
+function abrirModalReembolso() {
+  const f = APP.filhoAtual;
+  if(!f) return;
+  // Dois campos obrigatórios, e é tudo. Antes eram cinco, mais um comprovante
+  // pelo WhatsApp que "sem ele o reembolso fica pendente" — o Hunter conferiu
+  // e disse que comprovante não é necessário: valor e uma descrição bastam.
+  //
+  // Data da compra, onde comprou e finalidade saíram do formulário. Continuam
+  // no documento como null, porque o financeiro já lê os três de forma
+  // condicional e tirar a chave quebraria a linha do lançamento.
+  //
+  // O PIX ficou, e opcional: é por ele que o dinheiro volta, e o financeiro
+  // mostra a chave na tela de aprovação. Sem chave, a devolução é combinada na
+  // mão — o que já acontece com quem se vê toda semana.
+  abrirModal(`
+    <div class="modal-pq-h">
+      <h3 style="font-size:16px;font-weight:700">Pedir reembolso</h3>
+      <button class="modal-x" onclick="fecharModal()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-pq-b">
+      <form id="reemb-form" novalidate>
+        <div class="fi-group" style="margin-bottom:12px">
+          <label>O que você comprou <span style="color:var(--red)">*</span></label>
+          <textarea class="fi" id="re-desc" rows="2" placeholder="Ex: 5 velas brancas e 2kg de mandioca" required></textarea>
         </div>
-        <div class="fi-group" style="margin:0">
-          <label>Data da compra <span style="color:var(--red)">*</span></label>
-          <input class="fi" id="re-data" type="date" required max="${new Date().toISOString().slice(0,10)}" value="${new Date().toISOString().slice(0,10)}"/>
+        <div class="fi-group" style="margin-bottom:12px">
+          <label>Quanto custou <span style="color:var(--red)">*</span></label>
+          <input class="fi" id="re-valor" type="number" inputmode="decimal" step="0.01" min="0.01" placeholder="0,00" required/>
         </div>
-      </div>
-      <div class="fi-group" style="margin-bottom:10px">
-        <label>Onde comprou (opcional)</label>
-        <input class="fi" id="re-onde" placeholder="Ex: Mercado X, Casa de erva Y..."/>
-      </div>
-      <div class="fi-group" style="margin-bottom:10px">
-        <label>Pra que foi (opcional)</label>
-        <input class="fi" id="re-finalidade" placeholder="Ex: gira de sábado, festa de Iansã..."/>
-      </div>
-      <div class="fi-group" style="margin-bottom:6px">
-        <label>Chave PIX pra receber <span style="color:var(--red)">*</span></label>
-        <input class="fi" id="re-pix" placeholder="CPF, telefone, email ou chave aleatória" required/>
-      </div>
-      <div class="fi-group" style="margin-bottom:14px">
-        <label>Nome do titular do PIX (se diferente do seu)</label>
-        <input class="fi" id="re-pix-titular" placeholder="Deixe vazio se for seu próprio PIX"/>
-      </div>
-      <div style="padding:10px 12px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25);border-radius:8px;margin-bottom:12px;font-size:12.5px;color:var(--text2);line-height:1.5;text-align:center">
-        ✓ Depois de enviar, mande o <strong>comprovante (foto/print)</strong> pelo WhatsApp pra agilizar.
-      </div>
-      <button type="submit" class="btn btn-primary btn-block">Enviar pedido de reembolso</button>
-      <div id="re-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none"></div>
-    </form>
-  `;
+        <div class="fi-group" style="margin-bottom:4px">
+          <label>Chave PIX pra receber</label>
+          <input class="fi" id="re-pix" placeholder="CPF, telefone, email ou chave aleatória"/>
+          <div class="t-nota" style="margin-top:5px">Opcional. Sem ela a administração combina a devolução com você.</div>
+        </div>
+        <div id="re-err" style="color:var(--red);font-size:13px;text-align:center;margin-top:12px;display:none"></div>
+      </form>
+    </div>
+    <div class="modal-pq-f">
+      <button type="button" class="btn" onclick="fecharModal()" style="flex:1">Cancelar</button>
+      <button type="submit" form="reemb-form" class="btn btn-primary" style="flex:2">Enviar pedido</button>
+    </div>`);
+
   $('#reemb-form').addEventListener('submit', async e => {
     e.preventDefault();
     const desc = $('#re-desc').value.trim();
     const valor = parseFloat($('#re-valor').value);
-    const dt = $('#re-data').value;
-    const onde = $('#re-onde').value.trim();
-    const fim = $('#re-finalidade').value.trim();
     const pix = $('#re-pix').value.trim();
-    const pixTit = $('#re-pix-titular').value.trim();
     const err = $('#re-err');
     err.style.display = 'none';
-    if(!desc) return mostraErr('Descreve o que foi comprado', err);
+    if(!desc) return mostraErr('Conta o que você comprou', err);
     if(!valor || valor <= 0 || valor >= 100000) return mostraErr('Valor inválido', err);
-    if(!dt) return mostraErr('Informe a data da compra', err);
-    if(!pix) return mostraErr('Informe sua chave PIX', err);
 
-    const btn = $('#reemb-form button[type=submit]');
+    const btn = document.querySelector('button[form=reemb-form]');
     btn.disabled = true; btn.textContent = 'Enviando...';
     try {
       const ref = await addDoc(collection(dbPvd,'fin_reembolsos'), {
@@ -2755,11 +3200,13 @@ async function renderReembolso() {
         filho_id: f.id,
         descricao: desc,
         valor,
-        data_compra: dt,
-        onde_comprou: onde||null,
-        finalidade: fim||null,
-        pix_chave: pix,
-        pix_titular: pixTit||null,
+        // Continuam no doc como null: o financeiro lê os três de forma
+        // condicional, e sumir com a chave quebraria a linha do lançamento.
+        data_compra: new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }),
+        onde_comprou: null,
+        finalidade: null,
+        pix_chave: pix || null,
+        pix_titular: null,
         status: 'pendente',
         origem: 'reembolso_publico',
         criadoEm: serverTimestamp()
@@ -2769,10 +3216,9 @@ async function renderReembolso() {
     } catch(ex) {
       console.error(ex);
       mostraErr('Erro ao enviar. Tenta de novo.', err);
-      btn.disabled = false; btn.textContent = 'Enviar pedido de reembolso';
+      btn.disabled = false; btn.textContent = 'Enviar pedido';
     }
   });
-  carregarHistoricoReemb();
 }
 
 function mostraErr(msg, el) {
@@ -2782,23 +3228,28 @@ function mostraErr(msg, el) {
 }
 
 function mostrarSucessoReemb(valor, desc, id) {
-  const f = APP.filhoAtual;
-  const msg = `Olá! Acabei de pedir reembolso:\n\n💸 R$ ${valor.toFixed(2).replace('.',',')}\n📝 ${desc}\n👤 ${f.nome}\n\nSegue o comprovante:`;
-  const wa = `https://wa.me/5519992494267?text=${encodeURIComponent(msg)}`;
-  $('#reemb-form-container').innerHTML = `
-    <div class="card" style="text-align:center;margin-top:14px">
-      <div style="font-size:36px;color:var(--green);margin-bottom:10px">✓</div>
-      <div style="font-size:17px;font-weight:700;margin-bottom:8px">Pedido enviado!</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:18px">
-        Recebemos seu pedido de <strong style="color:var(--gold)">R$ ${valor.toFixed(2).replace('.',',')}</strong>.<br>
-        <strong style="color:var(--green)">Agora envia o comprovante pelo WhatsApp.</strong> Sem ele, o reembolso fica pendente.
+  // Era uma tela empurrando pro WhatsApp: "agora envia o comprovante, sem ele o
+  // reembolso fica pendente". Comprovante não é exigido — valor e descrição
+  // bastam — e cobrar um documento que ninguém vai conferir só fazia o filho
+  // achar que o pedido dele estava emperrado por culpa dele.
+  const alvo = document.getElementById('modal-content-geral');
+  if (!alvo) return;
+  alvo.innerHTML = `
+    <div style="padding:30px 22px;text-align:center">
+      <div style="font-size:38px;color:var(--green);line-height:1">✓</div>
+      <div style="font-size:17px;font-weight:750;margin-top:12px">Pedido enviado</div>
+      <div style="font-size:13.5px;color:var(--text2);line-height:1.55;margin-top:10px">
+        <strong style="color:var(--gold)">R$ ${valor.toFixed(2).replace('.',',')}</strong> — ${escapaHtml(desc).slice(0,80)}<br/>
+        A administração vê na hora. Você acompanha o andamento aqui mesmo.
       </div>
-      <a class="btn" style="background:#25d366;color:#fff;border-color:transparent;display:inline-flex;justify-content:center;gap:8px;padding:12px 22px;font-weight:700;border-radius:8px;text-decoration:none" href="${wa}" target="_blank" rel="noopener">💬 Enviar comprovante pelo WhatsApp</a>
-      <div style="margin-top:14px"><button class="btn" onclick="renderReembolso()" style="padding:8px 16px;font-size:12.5px">Fazer outro pedido</button></div>
-      <div style="font-size:10.5px;color:var(--text3);margin-top:10px;font-family:monospace">Protocolo: ${id.slice(0,8)}</div>
-    </div>
-  `;
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:20px">
+        <button class="btn" onclick="fecharModal();renderReembolso()" style="flex:1">Fechar</button>
+        <button class="btn" onclick="abrirModalReembolso()" style="flex:1">Pedir outro</button>
+      </div>
+      <div style="font-size:10.5px;color:var(--text3);margin-top:14px;font-family:ui-monospace,monospace">Protocolo ${id.slice(0,8)}</div>
+    </div>`;
 }
+
 
 async function carregarHistoricoReemb() {
   const f = APP.filhoAtual;
@@ -2854,7 +3305,10 @@ async function carregarHistoricoReemb() {
 }
 
 function trocarFilho() {
-  // Limpa auth do filho atual + reset UI pro seletor
+  // Sair apaga a sessão do disco. Sem isto, "sair" só escondia a tela e o
+  // próximo a pegar o celular entrava como a pessoa anterior.
+  APP.sessao = null;
+  Filhos.esquecerSessao();
   if(APP.filhoAtual) {
     try { sessionStorage.removeItem(`auth_${APP.filhoAtual.id}`); } catch(e) {}
   }
@@ -2879,17 +3333,24 @@ function trocarFilho() {
   const az = $('#dash-sec-afazeres'); if(az) az.style.display = 'none';
   const pq = $('#dash-sec-perguntas'); if(pq) pq.style.display = 'none';
   // Cards de captura também
-  const ec = $('#email-capture-card'); if(ec) ec.style.display = 'none';
-  const nc = $('#nasc-capture-card'); if(nc) nc.style.display = 'none';
+  const cc = $('#cadastro-card'); if(cc) cc.style.display = 'none';
   const an = $('#aniversariantes-card'); if(an) an.style.display = 'none';
   const aw = $('#actions-wrap'); if(aw) aw.style.display = 'none';
 }
 
 window.trocarFilho = trocarFilho;
 window.renderReembolso = renderReembolso;
+window.abrirModalReembolso = abrirModalReembolso;  // usado no onclick do modal de sucesso
 window.setTab = setTab;
 window.setSubTab = setSubTab;
 window._app = { salvar, toggleDiaRega, confirmarRega, limparCarrinho };
 </script>
+<nav class="abas" id="abas" role="tablist" aria-label="Seções da sua área" style="display:none">
+  <button class="aba-btn" role="tab" data-ir="inicio"      aria-selected="true"><span class="ic">🏠</span><span class="rot">Início</span></button>
+  <button class="aba-btn" role="tab" data-ir="avisos"      aria-selected="false"><span class="ic">🔔</span><span class="rot">Avisos</span><span class="aba-pt" id="aba-pt-avisos" style="display:none"></span></button>
+  <button class="aba-btn" role="tab" data-ir="agenda"      aria-selected="false"><span class="ic">📅</span><span class="rot">Agenda</span></button>
+  <button class="aba-btn" role="tab" data-ir="mensalidade" aria-selected="false"><span class="ic">💰</span><span class="rot">Mensalidade</span></button>
+  <button class="aba-btn" role="tab" data-ir="casa"        aria-selected="false"><span class="ic">🏺</span><span class="rot">Casa</span></button>
+</nav>
 </body>
 </html>
