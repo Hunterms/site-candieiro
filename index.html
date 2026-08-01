@@ -222,20 +222,26 @@
   //   - tipo interno (gira_fechada, trabalho_interno, mutirao, etc) → bloqueado
   //   - arquivado === true → bloqueado
   // Eventos antigos sem campo "tipo" e sem "publico" são tratados como gira aberta (compat).
-  const TIPOS_INTERNOS = new Set(['gira_fechada','trabalho_interno','mutirao','reuniao','obrigacao_coletiva','ensaio_curimba']);
-  const qEvt = query(collection(db, "eventos"), orderBy("data", "asc"));
-  onSnapshot(qEvt, snap => {
-    const evts = snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .filter(e => {
-        if (e.arquivado === true) return false;
-        if (e.publico === false) return false;
-        if (e.tipo && TIPOS_INTERNOS.has(e.tipo)) return false;
-        return true;
+  // A agenda vem do Worker, já filtrada. Antes era leitura direta da collection
+  // com o filtro AQUI, no navegador de quem visita: o site escondia os
+  // trabalhos internos e o dado continuava aberto pra quem consultasse a API.
+  // Gira aberta é convite; desenvolvimento de segunda não é.
+  //
+  // O localStorage segue sendo a rede: se o Worker não responder, o site mostra
+  // a última agenda que viu em vez de um calendário vazio.
+  (async () => {
+    try {
+      const resp = await fetch('https://terreiro-email.hunter-soares-c.workers.dev/agenda', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
       });
-    localStorage.setItem('cand_v5', JSON.stringify(evts));
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const { eventos } = await resp.json();
+      localStorage.setItem('cand_v5', JSON.stringify(eventos || []));
+    } catch (e) {
+      console.warn('agenda indisponível, usando a última que ficou guardada', e);
+    }
     if (window.renderCal) window.renderCal();
-  });
+  })();
 
   // ── Carrossel ──
   getDocs(collection(db, "slides")).then(snap => {
