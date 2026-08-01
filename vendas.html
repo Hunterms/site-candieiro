@@ -201,7 +201,7 @@ function mostrarErro(titulo, msg) {
         // Pelo Worker, sem telefone nem email. Quem se identificar recebe os
         // próprios dados de volta pelo /entrar. Ver filhos.js.
         APP.filhos = Filhos.ativos(await Filhos.carregarFilhos(CFG_AGENDAMENTO));
-      } catch(e) { APP.filhos = []; }
+      } catch(e) { Filhos.avisarFalha('a lista de filhos', e); APP.filhos = []; }
     }
     if(prod.publico === false) {
       // Continua mostrando — link continua válido mesmo se "privado" (só não lista)
@@ -478,7 +478,7 @@ function renderProduto(prod) {
       // qualquer pessoa inscrevia qualquer filho. O telefone também só vem
       // depois disto: ele saiu do elenco público em 01/08 (ver filhos.js).
       if(!APP.filhoSel._tel) {
-        const d4 = prompt(`Pra confirmar que é você, ${APP.filhoSel.nome.split(' ')[0]}, digite os 4 últimos dígitos do seu celular:`);
+        const d4 = prompt(`Pra confirmar que é você, ${APP.filhoSel.nome.split(' ')[0]}, digite seus 4 números de acesso:`);
         if(!d4) return;
         const r = await Filhos.entrar(CFG_AGENDAMENTO, APP.filhoSel.id, d4.replace(/\D/g,'').slice(-4));
         if(!r.ok) { err.textContent = Filhos.explicar(r.erro); err.style.display='block'; return; }
