@@ -283,6 +283,16 @@ window.closeModal = closeModal;
       }
     } catch(e) { console.warn('Erro servicos', e); }
 
+    // Segunda de desenvolvimento não tem consulta. A lista vem da agenda do site;
+    // se o Worker falhar, fecha toda segunda em vez de abrir horário em cima do trabalho.
+    try {
+      // O Worker só aceita POST; GET volta 405 e, lido como lista vazia, abria toda segunda.
+      const r = await fetch('https://terreiro-email.hunter-soares-c.workers.dev/agenda', { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
+      const d = await r.json();
+      if(!r.ok || !Array.isArray(d.sem_consulta)) throw new Error(d.error || r.status);
+      APP.semConsulta = new Set(d.sem_consulta);
+    } catch(e) { APP.semConsulta = null; console.warn('Erro agenda', e); }
+
     // Slots ocupados
     await carregarOcupados();
 
@@ -346,7 +356,9 @@ function slotLivre(data, hora, dur) {
 function gerarSlots(dataStr, dur) {
   if((APP.cfg.pausas||[]).some(p => dataStr >= p.de && dataStr <= p.ate)) return [];
   const dow = new Date(dataStr+'T00:00:00').getDay();
-  const janelas = APP.cfg.horarios_semana[String(dow)] || [];
+  if(APP.semConsulta ? APP.semConsulta.has(dataStr) : dow === 1) return [];
+  // horarios_extras: janelas a mais numa data só ({ 'AAAA-MM-DD': [{inicio,fim}] }), além das da semana.
+  const janelas = [...(APP.cfg.horarios_semana[String(dow)] || []), ...((APP.cfg.horarios_extras||{})[dataStr] || [])];
   if(janelas.length === 0) return [];
   const slots = [];
   const minBookable = Date.now() + (APP.cfg.antecedencia_min_horas||0)*3600*1000;
